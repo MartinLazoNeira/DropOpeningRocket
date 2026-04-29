@@ -121,7 +121,7 @@ This project is licensed under the **MIT License** - free to use, modify, and di
 
 ## 👨‍💻 **Author**
 
-Made with 🧡 by **Martín Lazoneira**
+Made with 🧡 by **Martín Lazo Neira**
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/martinlazoneira)
 
