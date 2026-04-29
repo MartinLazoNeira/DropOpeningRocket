@@ -757,28 +757,28 @@
             <div class="search-section">
                 <div class="search-box-pros">
                     <input type="text" id="proSearchInput" class="search-input" placeholder="🔍 Buscar jugador pro...">
-                    <button class="search-btn" onclick="searchPro()">🔍 Buscar</button>
-                    <button class="suggest-btn" onclick="toggleSuggestForm()">➕ Sugerir jugador</button>
+                    <button class="search-btn" id="searchBtnText" onclick="searchPro()">🔍 Buscar</button>
+                    <button class="suggest-btn" id="suggestBtnText" onclick="toggleSuggestForm()">➕ Sugerir jugador</button>
                 </div>
-                <button class="view-suggestions-btn" onclick="toggleSuggestionsList()">📋 Ver sugerencias de jugadores</button>
+                <button class="view-suggestions-btn" id="viewSuggestionsBtn" onclick="toggleSuggestionsList()">📋 Ver sugerencias de jugadores</button>
                 <div id="suggestForm" class="suggest-form">
-                    <h3>📝 Sugerir nuevo jugador pro</h3>
+                    <h3 id="suggestFormTitle">📝 Sugerir nuevo jugador pro</h3>
                     <input type="text" id="suggestName" placeholder="Nombre del jugador">
                     <input type="text" id="suggestTeam" placeholder="Equipo">
                     <textarea id="suggestReason" placeholder="¿Por qué debería agregarse? (opcional)"></textarea>
-                    <button class="submit-suggest" onclick="submitSuggestion()">📨 Enviar sugerencia</button>
+                    <button class="submit-suggest" id="submitSuggestText" onclick="submitSuggestion()">📨 Enviar sugerencia</button>
                 </div>
                 <div id="suggestionsList" class="suggestions-list">
-                    <h3>📋 Sugerencias enviadas</h3>
+                    <h3 id="suggestionsListTitle">📋 Sugerencias enviadas</h3>
                     <div id="suggestionsContainer"></div>
-                    <button class="submit-suggest" style="background: #dc3545; margin-top: 10px;" onclick="clearAllSuggestions()">🗑️ Borrar todas las sugerencias</button>
+                    <button class="submit-suggest" style="background: #dc3545; margin-top: 10px;" id="clearSuggestionsText" onclick="clearAllSuggestions()">🗑️ Borrar todas las sugerencias</button>
                 </div>
             </div>
             <div id="prosCount" style="margin-bottom: 10px; color: var(--text-secondary);"></div>
             <div class="pros-grid" id="prosGrid"></div>
             <div id="noResultsMsg" style="display: none;" class="no-results">
-                <p>❌ No se encontró el jugador</p>
-                <p>¿Quieres sugerir que agreguemos a este jugador? Usa el botón "Sugerir jugador"</p>
+                <p id="noResultsText">❌ No se encontró el jugador</p>
+                <p id="noResultsSuggestionText">¿Quieres sugerir que agreguemos a este jugador? Usa el botón "Sugerir jugador"</p>
             </div>
         </div>
     </div>
@@ -951,106 +951,6 @@
             ]
         };
 
-        // ==================== TRADUCCIONES ====================
-        const translations = {
-            es: {
-                homeText: "Inicio",
-                heroTitle: "🏆 RLProHub",
-                heroDesc: "Tu centro definitivo para configuraciones de pros de Rocket League, controles, eventos y más",
-                heroBadge: "🔥 Base de datos de configuraciones Pro",
-                featureProsTitle: "Pro Players",
-                featureProsDesc: "Configuraciones de los mejores jugadores",
-                featureCamTitle: "Cámara",
-                featureCamDesc: "Configuración recomendada por pros",
-                featureControlsTitle: "Controles",
-                featureControlsDesc: "Personaliza tus teclas",
-                featureVideoTitle: "Video",
-                featureVideoDesc: "Optimiza tu rendimiento",
-                featureTipsTitle: "Consejos Pro",
-                featureTipsDesc: "Mejora tu juego",
-                featureEventsTitle: "Eventos RLCS",
-                featureEventsDesc: "Calendario oficial",
-                eventsSectionTitle: "📅 Próximos Eventos",
-                footerText: "© 2026 RLProHub - Configuraciones y eventos de Rocket League",
-                prosTitle: "👑 Configuración de Pros",
-                prosDesc: "Datos de jugadores destacados de la RLCS",
-                camTitle: "📷 Configuración de Cámara",
-                camDesc: "Valores recomendados basados en el promedio de jugadores profesionales",
-                controlsTitle: "🎮 Controles",
-                controlsDesc: "Configuración óptima para mejorar tu mecánica",
-                videoTitle: "🖥️ Video",
-                videoDesc: "Optimización para máximo rendimiento (mínimo input lag)",
-                tipsTitle: "💡 Consejos para mejorar",
-                tipsDesc: "Aprende de los mejores jugadores profesionales",
-                eventsViewTitle: "📅 Calendario RLCS 2026",
-                eventsViewDesc: "Eventos oficiales de la temporada",
-                actionCol: "Acción",
-                keyCol: "Tecla",
-                whyCol: "Por qué",
-                customizeTitle: "⚙️ Personalizar controles",
-                driftLabel: "🎯 Derrape / Air Roll:",
-                boostLabel: "💨 Boost:",
-                boostRecommended: "(Recomendado por pros)",
-                searchPlaceholder: "🔍 Buscar jugador pro...",
-                searchBtn: "🔍 Buscar",
-                suggestBtn: "➕ Sugerir jugador",
-                viewSuggestionsBtn: "📋 Ver sugerencias de jugadores",
-                suggestFormTitle: "📝 Sugerir nuevo jugador pro",
-                submitSuggest: "📨 Enviar sugerencia",
-                clearSuggestions: "🗑️ Borrar todas las sugerencias",
-                noResultsText: "❌ No se encontró el jugador",
-                noResultsSuggestionText: "¿Quieres sugerir que agreguemos a este jugador? Usa el botón 'Sugerir jugador'"
-            },
-            en: {
-                homeText: "Home",
-                heroTitle: "🏆 RLProHub",
-                heroDesc: "Your ultimate hub for Rocket League pro settings, controls, events and more",
-                heroBadge: "🔥 Pro Settings Database",
-                featureProsTitle: "Pro Players",
-                featureProsDesc: "Settings from the best players",
-                featureCamTitle: "Camera",
-                featureCamDesc: "Recommended by pros",
-                featureControlsTitle: "Controls",
-                featureControlsDesc: "Customize your keybindings",
-                featureVideoTitle: "Video",
-                featureVideoDesc: "Optimize your performance",
-                featureTipsTitle: "Pro Tips",
-                featureTipsDesc: "Improve your game",
-                featureEventsTitle: "RLCS Events",
-                featureEventsDesc: "Official calendar",
-                eventsSectionTitle: "📅 Upcoming Events",
-                footerText: "© 2026 RLProHub - Rocket League Settings & Events",
-                prosTitle: "👑 Pro Players Settings",
-                prosDesc: "Data from top RLCS players",
-                camTitle: "📷 Camera Settings",
-                camDesc: "Recommended values based on pro player averages",
-                controlsTitle: "🎮 Controls",
-                controlsDesc: "Optimal settings to improve your mechanics",
-                videoTitle: "🖥️ Video Settings",
-                videoDesc: "Optimization for maximum performance (minimum input lag)",
-                tipsTitle: "💡 Improvement Tips",
-                tipsDesc: "Learn from the best professional players",
-                eventsViewTitle: "📅 RLCS 2026 Calendar",
-                eventsViewDesc: "Official season events",
-                actionCol: "Action",
-                keyCol: "Key",
-                whyCol: "Why",
-                customizeTitle: "⚙️ Customize controls",
-                driftLabel: "🎯 Drift / Air Roll:",
-                boostLabel: "💨 Boost:",
-                boostRecommended: "(Recommended by pros)",
-                searchPlaceholder: "🔍 Search pro player...",
-                searchBtn: "🔍 Search",
-                suggestBtn: "➕ Suggest player",
-                viewSuggestionsBtn: "📋 View player suggestions",
-                suggestFormTitle: "📝 Suggest new pro player",
-                submitSuggest: "📨 Submit suggestion",
-                clearSuggestions: "🗑️ Clear all suggestions",
-                noResultsText: "❌ Player not found",
-                noResultsSuggestionText: "Want to suggest we add this player? Use the 'Suggest player' button"
-            }
-        };
-
         // ==================== DATOS ESTÁTICOS ====================
         const cameraData = {
             es: [
@@ -1133,6 +1033,8 @@
                 loadTips();
             } else if (viewId === 'eventos') {
                 loadFullEventsList();
+            } else if (viewId === 'landing') {
+                loadEventsPreview();
             }
         }
 
@@ -1156,8 +1058,10 @@
 
         function loadEventsPreview() {
             const container = document.getElementById('eventsPreview');
+            if (!container) return;
             const events = eventsData[currentLang];
             container.innerHTML = '';
+            // Mostrar los primeros 3 eventos
             events.slice(0, 3).forEach(event => {
                 const isFinished = isEventFinished(event);
                 const statusClass = isFinished ? 'status-finished' : 'status-upcoming';
@@ -1174,6 +1078,7 @@
 
         function loadFullEventsList() {
             const container = document.getElementById('eventsList');
+            if (!container) return;
             const events = eventsData[currentLang];
             container.innerHTML = '';
             events.forEach(event => {
@@ -1185,7 +1090,8 @@
                         <div class="setting-name">${event.name}</div>
                         <div class="setting-value">📅 ${event.date}</div>
                         <div class="setting-desc">📍 ${event.location} | 💰 ${event.prize}</div>
-                        <div class="event-status ${statusClass}" style="margin-top: 10px;">${statusText}</div>
+                        <div class="event-status ${statusClass}" style="margin-top: 10px; display: inline-block;">${statusText}</div>
+                        ${event.winner && isFinished ? `<div style="margin-top: 8px; color: #FF5E00;">🏆 Winner: ${event.winner} ${event.winnerScore ? `(${event.winnerScore})` : ''}</div>` : ''}
                     </div>
                 `;
             });
@@ -1218,6 +1124,7 @@
         // ==================== PROS ====================
         function loadPros(prosList) {
             const grid = document.getElementById('prosGrid');
+            if (!grid) return;
             const count = document.getElementById('prosCount');
             count.innerHTML = `📊 ${prosList.length} ${currentLang === 'es' ? 'jugadores profesionales disponibles' : 'pro players available'}`;
             grid.innerHTML = '';
@@ -1249,6 +1156,12 @@
                 pro.name.toLowerCase().includes(term) || pro.team.toLowerCase().includes(term)
             );
             loadPros(filtered);
+            const noResults = document.getElementById('noResultsMsg');
+            if (filtered.length === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
         }
 
         // ==================== SUGERENCIAS ====================
@@ -1275,7 +1188,7 @@
                 return;
             }
             container.innerHTML = '';
-            suggestions.reverse().forEach((s, i) => {
+            suggestions.slice().reverse().forEach((s, i) => {
                 const date = new Date(s.date).toLocaleDateString(currentLang === 'es' ? 'es-ES' : 'en-US');
                 container.innerHTML += `
                     <div class="suggestion-item">
@@ -1333,6 +1246,7 @@
 
         function loadControls() {
             const body = document.getElementById('controlsBody');
+            if (!body) return;
             const controls = JSON.parse(JSON.stringify(controlsBase[currentLang]));
             controls[4].key = currentDriftKey;
             body.innerHTML = '';
@@ -1344,6 +1258,7 @@
         // ==================== OTRAS SECCIONES ====================
         function loadCameraSettings() {
             const container = document.getElementById('cameraSettings');
+            if (!container) return;
             const settings = cameraData[currentLang];
             container.innerHTML = '';
             settings.forEach(s => {
@@ -1353,6 +1268,7 @@
 
         function loadVideoSettings() {
             const container = document.getElementById('videoSettings');
+            if (!container) return;
             const settings = videoData[currentLang];
             container.innerHTML = '';
             settings.forEach(s => {
@@ -1362,6 +1278,7 @@
 
         function loadTips() {
             const container = document.getElementById('tipsGrid');
+            if (!container) return;
             const tips = tipsData[currentLang];
             container.innerHTML = '';
             tips.forEach(t => {
@@ -1370,6 +1287,107 @@
         }
 
         // ==================== TRADUCCIONES GENERALES ====================
+        const translations = {
+            es: {
+                homeText: "Inicio",
+                heroTitle: "🏆 RLProHub",
+                heroDesc: "Tu centro definitivo para configuraciones de pros de Rocket League, controles, eventos y más",
+                heroBadge: "🔥 Base de datos de configuraciones Pro",
+                featureProsTitle: "Pro Players",
+                featureProsDesc: "Configuraciones de los mejores jugadores",
+                featureCamTitle: "Cámara",
+                featureCamDesc: "Configuración recomendada por pros",
+                featureControlsTitle: "Controles",
+                featureControlsDesc: "Personaliza tus teclas",
+                featureVideoTitle: "Video",
+                featureVideoDesc: "Optimiza tu rendimiento",
+                featureTipsTitle: "Consejos Pro",
+                featureTipsDesc: "Mejora tu juego",
+                featureEventsTitle: "Eventos RLCS",
+                featureEventsDesc: "Calendario oficial",
+                eventsSectionTitle: "📅 Próximos Eventos",
+                footerText: "© 2026 RLProHub - Configuraciones y eventos de Rocket League",
+                prosTitle: "👑 Configuración de Pros",
+                prosDesc: "Datos de jugadores destacados de la RLCS",
+                camTitle: "📷 Configuración de Cámara",
+                camDesc: "Valores recomendados basados en el promedio de jugadores profesionales",
+                controlsTitle: "🎮 Controles",
+                controlsDesc: "Configuración óptima para mejorar tu mecánica",
+                videoTitle: "🖥️ Video",
+                videoDesc: "Optimización para máximo rendimiento (mínimo input lag)",
+                tipsTitle: "💡 Consejos para mejorar",
+                tipsDesc: "Aprende de los mejores jugadores profesionales",
+                eventsViewTitle: "📅 Calendario RLCS 2026",
+                eventsViewDesc: "Eventos oficiales de la temporada",
+                actionCol: "Acción",
+                keyCol: "Tecla",
+                whyCol: "Por qué",
+                customizeTitle: "⚙️ Personalizar controles",
+                driftLabel: "🎯 Derrape / Air Roll:",
+                boostLabel: "💨 Boost:",
+                boostRecommended: "(Recomendado por pros)",
+                searchPlaceholder: "🔍 Buscar jugador pro...",
+                searchBtn: "🔍 Buscar",
+                suggestBtn: "➕ Sugerir jugador",
+                viewSuggestionsBtn: "📋 Ver sugerencias de jugadores",
+                suggestFormTitle: "📝 Sugerir nuevo jugador pro",
+                submitSuggest: "📨 Enviar sugerencia",
+                suggestionsListTitle: "📋 Sugerencias enviadas",
+                clearSuggestions: "🗑️ Borrar todas las sugerencias",
+                noResultsText: "❌ No se encontró el jugador",
+                noResultsSuggestionText: "¿Quieres sugerir que agreguemos a este jugador? Usa el botón 'Sugerir jugador'"
+            },
+            en: {
+                homeText: "Home",
+                heroTitle: "🏆 RLProHub",
+                heroDesc: "Your ultimate hub for Rocket League pro settings, controls, events and more",
+                heroBadge: "🔥 Pro Settings Database",
+                featureProsTitle: "Pro Players",
+                featureProsDesc: "Settings from the best players",
+                featureCamTitle: "Camera",
+                featureCamDesc: "Recommended by pros",
+                featureControlsTitle: "Controls",
+                featureControlsDesc: "Customize your keybindings",
+                featureVideoTitle: "Video",
+                featureVideoDesc: "Optimize your performance",
+                featureTipsTitle: "Pro Tips",
+                featureTipsDesc: "Improve your game",
+                featureEventsTitle: "RLCS Events",
+                featureEventsDesc: "Official calendar",
+                eventsSectionTitle: "📅 Upcoming Events",
+                footerText: "© 2026 RLProHub - Rocket League Settings & Events",
+                prosTitle: "👑 Pro Players Settings",
+                prosDesc: "Data from top RLCS players",
+                camTitle: "📷 Camera Settings",
+                camDesc: "Recommended values based on pro player averages",
+                controlsTitle: "🎮 Controls",
+                controlsDesc: "Optimal settings to improve your mechanics",
+                videoTitle: "🖥️ Video Settings",
+                videoDesc: "Optimization for maximum performance (minimum input lag)",
+                tipsTitle: "💡 Improvement Tips",
+                tipsDesc: "Learn from the best professional players",
+                eventsViewTitle: "📅 RLCS 2026 Calendar",
+                eventsViewDesc: "Official season events",
+                actionCol: "Action",
+                keyCol: "Key",
+                whyCol: "Why",
+                customizeTitle: "⚙️ Customize controls",
+                driftLabel: "🎯 Drift / Air Roll:",
+                boostLabel: "💨 Boost:",
+                boostRecommended: "(Recommended by pros)",
+                searchPlaceholder: "🔍 Search pro player...",
+                searchBtn: "🔍 Search",
+                suggestBtn: "➕ Suggest player",
+                viewSuggestionsBtn: "📋 View player suggestions",
+                suggestFormTitle: "📝 Suggest new pro player",
+                submitSuggest: "📨 Submit suggestion",
+                suggestionsListTitle: "📋 Submitted suggestions",
+                clearSuggestions: "🗑️ Clear all suggestions",
+                noResultsText: "❌ Player not found",
+                noResultsSuggestionText: "Want to suggest we add this player? Use the 'Suggest player' button"
+            }
+        };
+
         function updateAllTexts() {
             const t = translations[currentLang];
             document.getElementById('homeText').innerHTML = t.homeText;
@@ -1415,21 +1433,28 @@
             document.getElementById('viewSuggestionsBtn').innerHTML = t.viewSuggestionsBtn;
             document.getElementById('suggestFormTitle').innerHTML = t.suggestFormTitle;
             document.getElementById('submitSuggestText').innerHTML = t.submitSuggest;
+            document.getElementById('suggestionsListTitle').innerHTML = t.suggestionsListTitle;
             document.getElementById('clearSuggestionsText').innerHTML = t.clearSuggestions;
+            document.getElementById('noResultsText').innerHTML = t.noResultsText;
+            document.getElementById('noResultsSuggestionText').innerHTML = t.noResultsSuggestionText;
             
-            // Recargar vistas
+            // Recargar todas las vistas activas y eventos
             loadEventsPreview();
             loadFullEventsList();
-            if (document.getElementById('prosView').classList.contains('active')) loadPros(prosData[currentLang]);
-            if (document.getElementById('camaraView').classList.contains('active')) loadCameraSettings();
-            if (document.getElementById('controlesView').classList.contains('active')) loadControls();
-            if (document.getElementById('videoView').classList.contains('active')) loadVideoSettings();
-            if (document.getElementById('consejosView').classList.contains('active')) loadTips();
+            loadControls();
+            loadCameraSettings();
+            loadVideoSettings();
+            loadTips();
+            
+            // Solo recargar pros si la vista está activa
+            if (document.getElementById('prosView').classList.contains('active')) {
+                loadPros(prosData[currentLang]);
+            }
             
             updateRealClock();
         }
 
-        // ==================== TEMA Y IDIOMA ====================
+        // ==================== TEMA ====================
         function toggleTheme() {
             document.body.classList.toggle('dark');
             const themeBtn = document.getElementById('themeBtn');
@@ -1449,6 +1474,9 @@
             const driftSelect = document.getElementById('driftSelect');
             if (driftSelect) driftSelect.value = savedDrift;
         }
+        
+        // Cargar eventos en landing al iniciar
+        loadEventsPreview();
         
         updateAllTexts();
         loadPros(prosData[currentLang]);
