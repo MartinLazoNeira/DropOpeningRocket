@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' text-anchor='middle' dy='.3em' font-size='80'>🚗</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RLProHub - Rocket League Pro Settings & Events</title>
     <style>
@@ -418,7 +419,6 @@
             transform: scale(1.02);
         }
 
-        /* Botón para ver sugerencias */
         .view-suggestions-btn {
             background: #17a2b8;
             color: white;
@@ -659,7 +659,7 @@
             background: var(--event-card-bg);
             padding: 15px;
             border-radius: 15px;
-            border-left: 4px solid #FF5E00;
+            border-left: 4px solid var(--event-border);
         }
 
         .setting-name {
@@ -803,7 +803,6 @@
                 <div class="card">
                     <h2 id="prosTitle">👑 Configuración de Pros</h2>
                     
-                    <!-- Buscador -->
                     <div class="search-section">
                         <div class="search-box-pros">
                             <input type="text" id="proSearchInput" class="search-input" id="searchPlaceholder" onkeyup="searchPro()">
@@ -811,10 +810,8 @@
                             <button class="suggest-btn" id="suggestBtnText" onclick="toggleSuggestForm()">➕ Sugerir jugador</button>
                         </div>
                         
-                        <!-- Botón para ver sugerencias -->
                         <button class="view-suggestions-btn" id="viewSuggestionsBtn" onclick="toggleSuggestionsList()">📋 Ver sugerencias de jugadores</button>
                         
-                        <!-- Formulario para sugerir jugador -->
                         <div id="suggestForm" class="suggest-form">
                             <h3 id="suggestFormTitle">📝 Sugerir nuevo jugador pro</h3>
                             <input type="text" id="suggestName" id="suggestNamePlaceholder" placeholder="Nombre del jugador">
@@ -823,7 +820,6 @@
                             <button class="submit-suggest" id="submitSuggestText" onclick="submitSuggestion()">📨 Enviar sugerencia</button>
                         </div>
                         
-                        <!-- Lista de sugerencias -->
                         <div id="suggestionsList" class="suggestions-list">
                             <h3 id="suggestionsListTitle">📋 Sugerencias enviadas</h3>
                             <div id="suggestionsContainer"></div>
@@ -1245,7 +1241,7 @@
                 navVideo: "🖥️ Video",
                 navConsejos: "💡 Consejos",
                 eventsTitle: "📅 Próximos Eventos",
-                mainTitle: "🏆 Rocket League Pro Settings",
+                mainTitle: "🏆 RLProHub",
                 mainDesc: "Configuración de pros y calendario oficial RLCS 2026",
                 badgeText: "🔥 Datos oficiales",
                 prosTitle: "👑 Configuración de Pros",
@@ -1307,7 +1303,7 @@
                 navVideo: "🖥️ Video",
                 navConsejos: "💡 Tips",
                 eventsTitle: "📅 Upcoming Events",
-                mainTitle: "🏆 Rocket League Pro Settings",
+                mainTitle: "🏆 RLProHub",
                 mainDesc: "Pro settings and official RLCS 2026 schedule",
                 badgeText: "🔥 Official data",
                 prosTitle: "👑 Pro Players Settings",
@@ -1369,12 +1365,10 @@
         function updateAllTexts() {
             const t = translationsData[currentLang];
             
-            // Header
             document.getElementById('mainTitle').innerHTML = t.mainTitle;
             document.getElementById('mainDesc').innerHTML = t.mainDesc;
             document.getElementById('badgeText').innerHTML = t.badgeText;
             
-            // Navegación
             document.getElementById('navPros').innerHTML = t.navPros;
             document.getElementById('navCamara').innerHTML = t.navCamara;
             document.getElementById('navControles').innerHTML = t.navControles;
@@ -1382,19 +1376,16 @@
             document.getElementById('navConsejos').innerHTML = t.navConsejos;
             document.getElementById('eventsTitle').innerHTML = t.eventsTitle;
             
-            // Títulos de secciones
             document.getElementById('prosTitle').innerHTML = t.prosTitle;
             document.getElementById('camTitle').innerHTML = t.camTitle;
             document.getElementById('controlsTitle').innerHTML = t.controlsTitle;
             document.getElementById('videoTitle').innerHTML = t.videoTitle;
             document.getElementById('tipsTitle').innerHTML = t.tipsTitle;
             
-            // Tabla de controles
             document.getElementById('actionCol').innerHTML = t.actionCol;
             document.getElementById('keyCol').innerHTML = t.keyCol;
             document.getElementById('whyCol').innerHTML = t.whyCol;
             
-            // Buscador y sugerencias
             document.getElementById('proSearchInput').placeholder = t.searchPlaceholder;
             document.getElementById('searchBtnText').innerHTML = t.searchBtn;
             document.getElementById('suggestBtnText').innerHTML = t.suggestBtn;
@@ -1409,13 +1400,11 @@
             document.getElementById('noResultsText').innerHTML = t.noResultsText;
             document.getElementById('noResultsSuggestionText').innerHTML = t.noResultsSuggestionText;
             
-            // Selector de controles
             document.getElementById('customizeTitle').innerHTML = t.customizeTitle;
             document.getElementById('driftLabel').innerHTML = t.driftLabel;
             document.getElementById('boostLabel').innerHTML = t.boostLabel;
             document.getElementById('boostRecommended').innerHTML = t.boostRecommended;
             
-            // Botones de tema e idioma
             const themeBtn = document.getElementById('themeBtn');
             const isDark = document.body.classList.contains('dark');
             themeBtn.innerHTML = isDark ? (currentLang === 'es' ? '☀️ Modo Claro' : '☀️ Light Mode') : (currentLang === 'es' ? '🌙 Modo Oscuro' : '🌙 Dark Mode');
