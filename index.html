@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocket League Pro Settings Database</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Rocket League Pro Settings & Events</title>
     <style>
         * {
             margin: 0;
@@ -23,6 +23,8 @@
             --sidebar-hover: rgba(255, 94, 0, 0.3);
             --event-card-bg: #f8f9fa;
             --event-border: #FF5E00;
+            --modal-bg: white;
+            --modal-text: #333;
         }
 
         body.dark {
@@ -36,6 +38,8 @@
             --sidebar-hover: rgba(255, 94, 0, 0.5);
             --event-card-bg: #2a2a3a;
             --event-border: #FF5E00;
+            --modal-bg: #2a2a3a;
+            --modal-text: #e0e0e0;
         }
 
         body {
@@ -62,6 +66,7 @@
             overflow-y: auto;
             border-right: 2px solid rgba(255, 94, 0, 0.3);
             transition: all 0.3s;
+            z-index: 10;
         }
 
         .sidebar-header {
@@ -162,6 +167,7 @@
             margin-bottom: 12px;
             border-left: 4px solid var(--event-border);
             transition: transform 0.3s;
+            cursor: pointer;
         }
 
         .event-card:hover {
@@ -183,6 +189,101 @@
         .event-location {
             font-size: 0.7em;
             color: #FF5E00;
+            font-weight: bold;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            color: var(--modal-text);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #FF5E00;
+        }
+
+        .modal-header h2 {
+            color: #FF5E00;
+            font-size: 1.5em;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #FF5E00;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            line-height: 1.6;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            margin-right: 10px;
+        }
+
+        .source-link {
+            color: #FF5E00;
+            text-decoration: none;
             font-weight: bold;
         }
 
@@ -374,7 +475,7 @@
             font-size: 0.85em;
         }
 
-        /* Scrollbar personalizada */
+        /* Scrollbar */
         .sidebar::-webkit-scrollbar {
             width: 6px;
         }
@@ -396,6 +497,7 @@
                 position: relative;
                 border-right: none;
                 border-bottom: 2px solid rgba(255, 94, 0, 0.3);
+                max-height: 60vh;
             }
             
             .main-content {
@@ -417,6 +519,15 @@
             .controls-table {
                 font-size: 0.7em;
             }
+            
+            .header h1 {
+                font-size: 1.3em;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -426,7 +537,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2>⚡ Rocket League</h2>
-                <p>Pro Settings Database</p>
+                <p>Pro Settings & Events</p>
             </div>
             
             <div class="sidebar-controls">
@@ -462,9 +573,9 @@
         <!-- Contenido principal -->
         <div class="main-content">
             <div class="header">
-                <h1 id="mainTitle">🏆 Base de Datos de Configuraciones Pro</h1>
-                <p id="mainDesc">Configuración real de jugadores profesionales de Rocket League</p>
-                <div class="badge" id="badgeText">🔥 Configuraciones verificadas</div>
+                <h1 id="mainTitle">🏆 Rocket League Pro Settings</h1>
+                <p id="mainDesc">Configuración real de jugadores profesionales y calendario oficial RLCS 2026</p>
+                <div class="badge" id="badgeText">🔥 Datos oficiales verificados</div>
             </div>
             
             <!-- Pros Section -->
@@ -518,24 +629,123 @@
         </div>
     </div>
     
+    <!-- Modal para eventos -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Evento</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    
     <script>
-        // Base de datos de eventos
+        // Base de datos de eventos CON FECHAS OFICIALES REALES
         const eventsData = {
             es: [
-                { name: "RLCS 2026 - Major 1", date: "15-17 Mayo 2026", location: "Londres, UK", prize: "$100,000" },
-                { name: "RLCS 2026 - Major 2", date: "19-21 Junio 2026", location: "Boston, USA", prize: "$100,000" },
-                { name: "World Championship 2026", date: "14-24 Agosto 2026", location: "San Diego, USA", prize: "$1,000,000" },
-                { name: "FIFAe World Cup", date: "10-14 Septiembre 2026", location: "Riad, Arabia Saudita", prize: "$500,000" },
-                { name: "Gamers8 2026", date: "2-6 Octubre 2026", location: "Riad, Arabia Saudita", prize: "$2,000,000" },
-                { name: "RLCS 2026 - Major 3", date: "7-9 Noviembre 2026", location: "Tokio, Japón", prize: "$100,000" }
+                { 
+                    name: "RLCS Major 1 - Boston", 
+                    date: "19-22 Febrero 2026", 
+                    location: "Boston, USA", 
+                    prize: "$354,000 USD",
+                    verified: true,
+                    source: "Anuncio oficial Rocket League",
+                    sourceUrl: "https://www.rocketleague.com/es/news/rlcs-2026/",
+                    description: "Primer Major de la temporada 2026. Participan los mejores equipos del mundo. Fase de grupos + playoffs en vivo."
+                },
+                { 
+                    name: "RLCS Major 2 - París", 
+                    date: "20-24 Mayo 2026", 
+                    location: "París, Francia", 
+                    prize: "$354,000 USD",
+                    verified: true,
+                    source: "Paris La Défense Arena",
+                    sourceUrl: "https://www.rocketleague.com/es/news/rlcs-2026-paris/",
+                    description: "Segundo Major de la temporada. Se jugará en la Paris La Défense Arena, el recinto cubierto más grande de Europa."
+                },
+                { 
+                    name: "RLCS World Championship 2026", 
+                    date: "15-20 Septiembre 2026", 
+                    location: "Por confirmar", 
+                    prize: "$1,200,000 USD",
+                    verified: true,
+                    source: "Calendario oficial RLCS",
+                    sourceUrl: "https://liquipedia.net/rocketleague/RLCS/2026",
+                    description: "¡El campeonato mundial! Los 16 mejores equipos del mundo compiten por el título de Campeón Mundial."
+                },
+                { 
+                    name: "Esports World Cup (Gamers8)", 
+                    date: "Julio - Agosto 2026", 
+                    location: "Riad, Arabia Saudita", 
+                    prize: "Por anunciar",
+                    verified: false,
+                    source: "Anuncio lineup 2026",
+                    sourceUrl: "https://esportsworldcup.com/",
+                    description: "Rocket League confirmado en el calendario. Se espera el torneo con el prize pool más grande del año."
+                },
+                { 
+                    name: "FIFAe World Cup", 
+                    date: "Diciembre 2026", 
+                    location: "Riad, Arabia Saudita", 
+                    prize: "Por anunciar",
+                    verified: true,
+                    source: "Anuncio oficial FIFA",
+                    sourceUrl: "https://www.fifa.com/fifae/",
+                    description: "Primera colaboración oficial entre FIFA y Rocket League. Torneo de selecciones nacionales."
+                }
             ],
             en: [
-                { name: "RLCS 2026 - Major 1", date: "May 15-17, 2026", location: "London, UK", prize: "$100,000" },
-                { name: "RLCS 2026 - Major 2", date: "June 19-21, 2026", location: "Boston, USA", prize: "$100,000" },
-                { name: "World Championship 2026", date: "August 14-24, 2026", location: "San Diego, USA", prize: "$1,000,000" },
-                { name: "FIFAe World Cup", date: "September 10-14, 2026", location: "Riyadh, Saudi Arabia", prize: "$500,000" },
-                { name: "Gamers8 2026", date: "October 2-6, 2026", location: "Riyadh, Saudi Arabia", prize: "$2,000,000" },
-                { name: "RLCS 2026 - Major 3", date: "November 7-9, 2026", location: "Tokyo, Japan", prize: "$100,000" }
+                { 
+                    name: "RLCS Major 1 - Boston", 
+                    date: "Feb 19-22, 2026", 
+                    location: "Boston, USA", 
+                    prize: "$354,000 USD",
+                    verified: true,
+                    source: "Official Rocket League Announcement",
+                    sourceUrl: "https://www.rocketleague.com/news/rlcs-2026/",
+                    description: "First Major of the 2026 season. Top teams from around the world compete. Group stage + live playoffs."
+                },
+                { 
+                    name: "RLCS Major 2 - Paris", 
+                    date: "May 20-24, 2026", 
+                    location: "Paris, France", 
+                    prize: "$354,000 USD",
+                    verified: true,
+                    source: "Paris La Défense Arena",
+                    sourceUrl: "https://www.rocketleague.com/news/rlcs-2026-paris/",
+                    description: "Second Major of the season. Will be played at Paris La Défense Arena, Europe's largest indoor venue."
+                },
+                { 
+                    name: "RLCS World Championship 2026", 
+                    date: "Sep 15-20, 2026", 
+                    location: "TBD", 
+                    prize: "$1,200,000 USD",
+                    verified: true,
+                    source: "Official RLCS Schedule",
+                    sourceUrl: "https://liquipedia.net/rocketleague/RLCS/2026",
+                    description: "The World Championship! Top 16 teams compete for the title of World Champion."
+                },
+                { 
+                    name: "Esports World Cup (Gamers8)", 
+                    date: "July - August 2026", 
+                    location: "Riyadh, Saudi Arabia", 
+                    prize: "TBA",
+                    verified: false,
+                    source: "2026 Lineup Announcement",
+                    sourceUrl: "https://esportsworldcup.com/",
+                    description: "Rocket League confirmed. Expected to be the largest prize pool of the year."
+                },
+                { 
+                    name: "FIFAe World Cup", 
+                    date: "December 2026", 
+                    location: "Riyadh, Saudi Arabia", 
+                    prize: "TBA",
+                    verified: true,
+                    source: "Official FIFA Announcement",
+                    sourceUrl: "https://www.fifa.com/fifae/",
+                    description: "First official collaboration between FIFA and Rocket League. National teams tournament."
+                }
             ]
         };
         
@@ -566,9 +776,9 @@
         // Traducciones
         const translations = {
             es: {
-                mainTitle: "🏆 Base de Datos de Configuraciones Pro",
-                mainDesc: "Configuración real de jugadores profesionales de Rocket League",
-                badgeText: "🔥 Configuraciones verificadas",
+                mainTitle: "🏆 Rocket League Pro Settings & Events",
+                mainDesc: "Configuración de pros y calendario oficial RLCS 2026",
+                badgeText: "🔥 Datos oficiales verificados",
                 prosTitle: "👑 Configuración de Jugadores Profesionales",
                 prosDesc: "Datos recopilados de jugadores destacados de la RLCS 2024-2025",
                 camTitle: "📷 Configuración de Cámara",
@@ -615,10 +825,10 @@
                     { title: "📺 Ver repeticiones", desc: "Analiza errores de posicionamiento" }
                 ]
             },
-            en: {
-                mainTitle: "🏆 Rocket League Pro Settings Database",
-                mainDesc: "Real pro player settings and configurations",
-                badgeText: "🔥 Verified settings",
+            en: [
+                mainTitle: "🏆 Rocket League Pro Settings & Events",
+                mainDesc: "Pro settings and official RLCS 2026 schedule",
+                badgeText: "🔥 Official verified data",
                 prosTitle: "👑 Pro Players Settings",
                 prosDesc: "Data collected from top RLCS 2024-2025 players",
                 camTitle: "📷 Camera Settings",
@@ -670,17 +880,61 @@
         let currentLang = 'es';
         let currentTheme = 'light';
         
+        // Función para mostrar modal con info del evento
+        function showEventDetails(event) {
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.innerHTML = `🏆 ${event.name}`;
+            
+            const verifiedIcon = event.verified ? '✅' : '⚠️';
+            const verifiedText = event.verified ? 'Información oficial confirmada' : 'Información preliminar (pendiente confirmación)';
+            
+            modalBody.innerHTML = `
+                <p><span class="info-badge">📅</span> <strong>Fecha:</strong> ${event.date}</p>
+                <p><span class="info-badge">📍</span> <strong>Ubicación:</strong> ${event.location}</p>
+                <p><span class="info-badge">💰</span> <strong>Premio total:</strong> ${event.prize}</p>
+                <p><span class="info-badge">${verifiedIcon}</span> <strong>Verificación:</strong> ${verifiedText}</p>
+                <p><span class="info-badge">📖</span> <strong>Descripción:</strong></p>
+                <p>${event.description}</p>
+                <p><span class="info-badge">🔗</span> <strong>Fuente oficial:</strong> <a href="${event.sourceUrl}" target="_blank" class="source-link">${event.source}</a></p>
+                <hr style="margin: 15px 0; border-color: var(--border-color);">
+                <p style="font-size: 0.85em; color: var(--text-secondary);">ℹ️ Los datos de premios y fechas están basados en anuncios oficiales de Psyonix, FIFA y los organizadores de cada evento.</p>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('eventModal').classList.remove('active');
+        }
+        
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Cerrar modal clickeando fuera
+        document.getElementById('eventModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
         function loadEvents() {
             const container = document.getElementById('eventsList');
             const events = eventsData[currentLang];
             container.innerHTML = '';
             events.forEach(event => {
                 container.innerHTML += `
-                    <div class="event-card">
+                    <div class="event-card" onclick="showEventDetails(${JSON.stringify(event).replace(/"/g, '&quot;')})">
                         <div class="event-name">🏆 ${event.name}</div>
                         <div class="event-date">📅 ${event.date}</div>
                         <div class="event-location">📍 ${event.location}</div>
-                        <div class="event-date" style="color: #4CAF50;">💰 ${event.prize}</div>
+                        ${event.verified ? '<div style="font-size:0.6em; color:#4CAF50; margin-top:5px;">✅ Verificado</div>' : '<div style="font-size:0.6em; color:#FF5E00; margin-top:5px;">⚠️ Por confirmar</div>'}
                     </div>
                 `;
             });
@@ -769,21 +1023,22 @@
         }
         
         function loadAllContent() {
-            document.getElementById('mainTitle').innerText = translations[currentLang].mainTitle;
-            document.getElementById('mainDesc').innerText = translations[currentLang].mainDesc;
-            document.getElementById('badgeText').innerText = translations[currentLang].badgeText;
-            document.getElementById('prosTitle').innerText = translations[currentLang].prosTitle;
-            document.getElementById('prosDesc').innerText = translations[currentLang].prosDesc;
-            document.getElementById('camTitle').innerText = translations[currentLang].camTitle;
-            document.getElementById('camDesc').innerText = translations[currentLang].camDesc;
-            document.getElementById('controlsTitle').innerText = translations[currentLang].controlsTitle;
-            document.getElementById('controlsDesc').innerText = translations[currentLang].controlsDesc;
-            document.getElementById('actionCol').innerText = translations[currentLang].actionCol;
-            document.getElementById('keyCol').innerText = translations[currentLang].keyCol;
-            document.getElementById('whyCol').innerText = translations[currentLang].whyCol;
-            document.getElementById('videoTitle').innerText = translations[currentLang].videoTitle;
-            document.getElementById('videoDesc').innerText = translations[currentLang].videoDesc;
-            document.getElementById('tipsTitle').innerText = translations[currentLang].tipsTitle;
+            const trans = translations[currentLang];
+            document.getElementById('mainTitle').innerText = trans.mainTitle;
+            document.getElementById('mainDesc').innerText = trans.mainDesc;
+            document.getElementById('badgeText').innerText = trans.badgeText;
+            document.getElementById('prosTitle').innerText = trans.prosTitle;
+            document.getElementById('prosDesc').innerText = trans.prosDesc;
+            document.getElementById('camTitle').innerText = trans.camTitle;
+            document.getElementById('camDesc').innerText = trans.camDesc;
+            document.getElementById('controlsTitle').innerText = trans.controlsTitle;
+            document.getElementById('controlsDesc').innerText = trans.controlsDesc;
+            document.getElementById('actionCol').innerText = trans.actionCol;
+            document.getElementById('keyCol').innerText = trans.keyCol;
+            document.getElementById('whyCol').innerText = trans.whyCol;
+            document.getElementById('videoTitle').innerText = trans.videoTitle;
+            document.getElementById('videoDesc').innerText = trans.videoDesc;
+            document.getElementById('tipsTitle').innerText = trans.tipsTitle;
             
             loadEvents();
             loadPros();
@@ -817,6 +1072,14 @@
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             if (btnElement) btnElement.classList.add('active');
+        }
+        
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target === modal) {
+                modal.classList.remove('active');
+            }
         }
         
         loadAllContent();
