@@ -26,6 +26,7 @@
             --modal-text: #333;
             --clock-bg: rgba(0,0,0,0.5);
             --selector-bg: #f0f0f0;
+            --search-bg: white;
         }
 
         body.dark {
@@ -41,6 +42,7 @@
             --modal-text: #e0e0e0;
             --clock-bg: rgba(0,0,0,0.7);
             --selector-bg: #3a3a4a;
+            --search-bg: #2a2a3a;
         }
 
         body {
@@ -50,7 +52,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Botón hamburguesa */
         .hamburger-btn {
             position: fixed;
             top: 20px;
@@ -90,7 +91,6 @@
             z-index: 10;
         }
 
-        /* Overlay para móvil */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -358,6 +358,114 @@
             margin-top: 10px;
         }
 
+        /* Buscador de pros */
+        .search-section {
+            margin-bottom: 25px;
+        }
+
+        .search-box-pros {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            background: var(--search-bg);
+            color: var(--text-primary);
+            font-size: 1em;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-btn {
+            background: #FF5E00;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #004DE5;
+            transform: scale(1.02);
+        }
+
+        .suggest-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .suggest-btn:hover {
+            background: #218838;
+            transform: scale(1.02);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            background: var(--event-card-bg);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .no-results p {
+            margin-bottom: 15px;
+        }
+
+        .suggest-form {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--selector-bg);
+            border-radius: 15px;
+            display: none;
+        }
+
+        .suggest-form.show {
+            display: block;
+        }
+
+        .suggest-form input, .suggest-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--search-bg);
+            color: var(--text-primary);
+        }
+
+        .suggest-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .submit-suggest {
+            background: #FF5E00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
         .tab-content {
             display: none;
         }
@@ -540,7 +648,6 @@
             font-size: 0.85em;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .hamburger-btn {
                 display: block;
@@ -584,14 +691,15 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            
+            .search-box-pros {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Botón hamburguesa -->
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">☰</button>
-    
-    <!-- Overlay para cerrar sidebar en móvil -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
     
     <div class="app-wrapper">
@@ -635,7 +743,31 @@
             <div id="pros" class="tab-content active">
                 <div class="card">
                     <h2 id="prosTitle">👑 Configuración de Pros</h2>
+                    
+                    <!-- Buscador -->
+                    <div class="search-section">
+                        <div class="search-box-pros">
+                            <input type="text" id="proSearchInput" class="search-input" placeholder="🔍 Buscar jugador pro... (Zen, M0nkey M00n, Vatira...)" onkeyup="searchPro()">
+                            <button class="search-btn" onclick="searchPro()">🔍 Buscar</button>
+                            <button class="suggest-btn" onclick="toggleSuggestForm()">➕ Sugerir jugador</button>
+                        </div>
+                        
+                        <!-- Formulario para sugerir jugador -->
+                        <div id="suggestForm" class="suggest-form">
+                            <h3>📝 Sugerir nuevo jugador pro</h3>
+                            <input type="text" id="suggestName" placeholder="Nombre del jugador">
+                            <input type="text" id="suggestTeam" placeholder="Equipo">
+                            <textarea id="suggestReason" placeholder="¿Por qué debería agregarse? (opcional)"></textarea>
+                            <button class="submit-suggest" onclick="submitSuggestion()">📨 Enviar sugerencia</button>
+                        </div>
+                    </div>
+                    
+                    <div id="prosCount" style="margin-bottom: 10px; color: var(--text-secondary);"></div>
                     <div class="pros-grid" id="prosGrid"></div>
+                    <div id="noResultsMsg" style="display: none; text-align: center; padding: 40px; background: var(--event-card-bg); border-radius: 15px; margin-top: 20px;">
+                        <p>❌ No se encontró el jugador</p>
+                        <p style="font-size: 0.9em;">¿Quieres sugerir que agreguemos a este jugador? Usa el botón "Sugerir jugador"</p>
+                    </div>
                 </div>
             </div>
             
@@ -716,14 +848,13 @@
             overlay.classList.remove('active');
         }
         
-        // Cerrar sidebar al hacer clic en un enlace (móvil)
         function closeSidebarOnMobile() {
             if (window.innerWidth <= 768) {
                 closeSidebar();
             }
         }
         
-        // ==================== RELOJ EN TIEMPO REAL ====================
+        // ==================== RELOJ ====================
         function updateRealClock() {
             const now = new Date();
             const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -740,7 +871,45 @@
         
         setInterval(updateRealClock, 1000);
         
-        // ==================== CONFIGURACIÓN DE CONTROLES ====================
+        // ==================== PROS DATA (15 jugadores) ====================
+        const prosData = {
+            es: [
+                { name: "Zen", team: "Vitality", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.05, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "M0nkey M00n", team: "BDS", settings: { fov: 110, distance: 270, height: 90, angle: -4, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.5, sens_air: 1.6 } },
+                { name: "Vatira", team: "KC", settings: { fov: 109, distance: 270, height: 100, angle: -4, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.3, sens_air: 1.3 } },
+                { name: "Firstkiller", team: "G2", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.5, deadzone: 0.05, sens_dir: 1.35, sens_air: 1.35 } },
+                { name: "Beastmode", team: "G2", settings: { fov: 110, distance: 270, height: 90, angle: -5, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "Daniel", team: "Shopify", settings: { fov: 110, distance: 270, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.3, sens_air: 1.4 } },
+                { name: "Rise", team: "BDS", settings: { fov: 110, distance: 280, height: 100, angle: -4, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.6, sens_air: 1.6 } },
+                { name: "Atow", team: "KC", settings: { fov: 110, distance: 270, height: 110, angle: -3, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.5, sens_air: 1.5 } },
+                { name: "Chronic", team: "Gen.G", settings: { fov: 110, distance: 280, height: 110, angle: -3, stiffness: 0.4, deadzone: 0.08, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "Nwpo", team: "Twisted Minds", settings: { fov: 110, distance: 270, height: 100, angle: -4, stiffness: 0.45, deadzone: 0.07, sens_dir: 1.4, sens_air: 1.5 } },
+                { name: "Reysbull", team: "Team Secret", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.08, sens_dir: 1.35, sens_air: 1.35 } },
+                { name: "AcroniK", team: "Gentle Mates", settings: { fov: 110, distance: 270, height: 90, angle: -4, stiffness: 0.45, deadzone: 0.09, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "Oski", team: "KC", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.07, sens_dir: 1.45, sens_air: 1.45 } },
+                { name: "Itachi", team: "Gentle Mates", settings: { fov: 110, distance: 270, height: 100, angle: -4, stiffness: 0.42, deadzone: 0.08, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "ExoTiiK", team: "Vitality", settings: { fov: 110, distance: 280, height: 105, angle: -3, stiffness: 0.38, deadzone: 0.06, sens_dir: 1.38, sens_air: 1.38 } }
+            ],
+            en: [
+                { name: "Zen", team: "Vitality", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.05, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "M0nkey M00n", team: "BDS", settings: { fov: 110, distance: 270, height: 90, angle: -4, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.5, sens_air: 1.6 } },
+                { name: "Vatira", team: "KC", settings: { fov: 109, distance: 270, height: 100, angle: -4, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.3, sens_air: 1.3 } },
+                { name: "Firstkiller", team: "G2", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.5, deadzone: 0.05, sens_dir: 1.35, sens_air: 1.35 } },
+                { name: "Beastmode", team: "G2", settings: { fov: 110, distance: 270, height: 90, angle: -5, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "Daniel", team: "Shopify", settings: { fov: 110, distance: 270, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.3, sens_air: 1.4 } },
+                { name: "Rise", team: "BDS", settings: { fov: 110, distance: 280, height: 100, angle: -4, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.6, sens_air: 1.6 } },
+                { name: "Atow", team: "KC", settings: { fov: 110, distance: 270, height: 110, angle: -3, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.5, sens_air: 1.5 } },
+                { name: "Chronic", team: "Gen.G", settings: { fov: 110, distance: 280, height: 110, angle: -3, stiffness: 0.4, deadzone: 0.08, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "Nwpo", team: "Twisted Minds", settings: { fov: 110, distance: 270, height: 100, angle: -4, stiffness: 0.45, deadzone: 0.07, sens_dir: 1.4, sens_air: 1.5 } },
+                { name: "Reysbull", team: "Team Secret", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.08, sens_dir: 1.35, sens_air: 1.35 } },
+                { name: "AcroniK", team: "Gentle Mates", settings: { fov: 110, distance: 270, height: 90, angle: -4, stiffness: 0.45, deadzone: 0.09, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "Oski", team: "KC", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.07, sens_dir: 1.45, sens_air: 1.45 } },
+                { name: "Itachi", team: "Gentle Mates", settings: { fov: 110, distance: 270, height: 100, angle: -4, stiffness: 0.42, deadzone: 0.08, sens_dir: 1.4, sens_air: 1.4 } },
+                { name: "ExoTiiK", team: "Vitality", settings: { fov: 110, distance: 280, height: 105, angle: -3, stiffness: 0.38, deadzone: 0.06, sens_dir: 1.38, sens_air: 1.38 } }
+            ]
+        };
+
+        // ==================== CONTROLES DINÁMICOS ====================
         let currentDriftKey = "Square/X";
         
         const controlsBase = {
@@ -785,7 +954,12 @@
             });
         }
         
-        // ==================== DATOS DE EVENTOS ====================
+        // ==================== EVENTOS ====================
+        function isEventFinished(event) {
+            const now = new Date();
+            return now > event.dateEnd;
+        }
+        
         const eventsData = {
             es: [
                 { name: "RLCS Major 1 - Boston", date: "19-22 Febrero 2026", dateStart: new Date(2026, 1, 19), dateEnd: new Date(2026, 1, 22), location: "Boston, USA", prize: "$354,000", verified: true, desc: "Primer Major de la temporada 2026.", winner: "Gentle Mates", winnerScore: "4-1" },
@@ -802,32 +976,149 @@
                 { name: "FIFAe World Cup", date: "December 2026", dateStart: new Date(2026, 11, 1), dateEnd: new Date(2026, 11, 31), location: "Riyadh, Saudi Arabia", prize: "TBA", verified: true, desc: "FIFA x Rocket League collab.", winner: null }
             ]
         };
-
-        // ==================== DATOS DE PROS ====================
-        const prosData = {
-            es: [
-                { name: "Zen", team: "Vitality", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.05, sens_dir: 1.4, sens_air: 1.4 } },
-                { name: "M0nkey M00n", team: "BDS", settings: { fov: 110, distance: 270, height: 90, angle: -4, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.5, sens_air: 1.6 } },
-                { name: "Vatira", team: "KC", settings: { fov: 109, distance: 270, height: 100, angle: -4, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.3, sens_air: 1.3 } },
-                { name: "Firstkiller", team: "G2", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.5, deadzone: 0.05, sens_dir: 1.35, sens_air: 1.35 } },
-                { name: "Beastmode", team: "G2", settings: { fov: 110, distance: 270, height: 90, angle: -5, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.4, sens_air: 1.4 } },
-                { name: "Daniel", team: "Shopify", settings: { fov: 110, distance: 270, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.3, sens_air: 1.4 } },
-                { name: "Rise", team: "BDS", settings: { fov: 110, distance: 280, height: 100, angle: -4, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.6, sens_air: 1.6 } },
-                { name: "Atow", team: "KC", settings: { fov: 110, distance: 270, height: 110, angle: -3, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.5, sens_air: 1.5 } }
-            ],
-            en: [
-                { name: "Zen", team: "Vitality", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.05, sens_dir: 1.4, sens_air: 1.4 } },
-                { name: "M0nkey M00n", team: "BDS", settings: { fov: 110, distance: 270, height: 90, angle: -4, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.5, sens_air: 1.6 } },
-                { name: "Vatira", team: "KC", settings: { fov: 109, distance: 270, height: 100, angle: -4, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.3, sens_air: 1.3 } },
-                { name: "Firstkiller", team: "G2", settings: { fov: 110, distance: 280, height: 100, angle: -3, stiffness: 0.5, deadzone: 0.05, sens_dir: 1.35, sens_air: 1.35 } },
-                { name: "Beastmode", team: "G2", settings: { fov: 110, distance: 270, height: 90, angle: -5, stiffness: 0.45, deadzone: 0.1, sens_dir: 1.4, sens_air: 1.4 } },
-                { name: "Daniel", team: "Shopify", settings: { fov: 110, distance: 270, height: 100, angle: -3, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.3, sens_air: 1.4 } },
-                { name: "Rise", team: "BDS", settings: { fov: 110, distance: 280, height: 100, angle: -4, stiffness: 0.4, deadzone: 0.1, sens_dir: 1.6, sens_air: 1.6 } },
-                { name: "Atow", team: "KC", settings: { fov: 110, distance: 270, height: 110, angle: -3, stiffness: 0.35, deadzone: 0.08, sens_dir: 1.5, sens_air: 1.5 } }
-            ]
+        
+        window.showEventDetails = function(eventJson) {
+            const event = eventJson;
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            const isFinished = isEventFinished(event);
+            const statusText = isFinished ? (currentLang === 'es' ? '🏁 FINALIZADO' : '🏁 FINISHED') : (currentLang === 'es' ? '📅 PRÓXIMO' : '📅 UPCOMING');
+            const winnerHtml = event.winner && isFinished ? `<p><strong>🏆 Winner:</strong> ${event.winner} ${event.winnerScore ? `(${event.winnerScore})` : ''}</p>` : '';
+            
+            modalTitle.innerHTML = `🏆 ${event.name}`;
+            modalBody.innerHTML = `
+                <p><strong>📅 Date:</strong> ${event.date}</p>
+                <p><strong>📍 Location:</strong> ${event.location}</p>
+                <p><strong>💰 Prize:</strong> ${event.prize}</p>
+                <p><strong>✅ Verified:</strong> ${event.verified ? (currentLang === 'es' ? 'Yes' : 'Yes') : (currentLang === 'es' ? 'Pending' : 'Pending')}</p>
+                <p><strong>📖 Description:</strong> ${event.desc}</p>
+                ${winnerHtml}
+                <p><strong>📌 Status:</strong> <span style="color: ${isFinished ? '#FF5E00' : '#4CAF50'}; font-weight: bold;">${statusText}</span></p>
+            `;
+            modal.classList.add('show');
         };
-
-        // ==================== DATOS TRADUCIDOS ====================
+        
+        window.closeModal = function() {
+            document.getElementById('eventModal').classList.remove('show');
+        };
+        
+        function loadEvents() {
+            const container = document.getElementById('eventsList');
+            const events = eventsData[currentLang];
+            container.innerHTML = '';
+            events.forEach(event => {
+                const isFinished = isEventFinished(event);
+                const statusClass = isFinished ? 'status-finished' : 'status-upcoming';
+                const statusText = isFinished ? '🏁 Finished' : '📅 Upcoming';
+                
+                container.innerHTML += `
+                    <div class="event-card ${isFinished ? 'past' : ''}" onclick="showEventDetails(${JSON.stringify(event).replace(/"/g, '&quot;')})">
+                        <div class="event-name">🏆 ${event.name}</div>
+                        <div class="event-date">📅 ${event.date}</div>
+                        <div class="event-location">📍 ${event.location}</div>
+                        <div class="event-status ${statusClass}">${statusText}</div>
+                        ${event.winner && isFinished ? `<div style="font-size:0.65em; color:#FF5E00; margin-top:5px;">🏆 Winner: ${event.winner}</div>` : ''}
+                    </div>
+                `;
+            });
+        }
+        
+        // ==================== FUNCIONES DE BÚSQUEDA ====================
+        let currentPros = [...prosData.es];
+        
+        function loadPros(filteredPros = null) {
+            const grid = document.getElementById('prosGrid');
+            const prosToShow = filteredPros || prosData[currentLang];
+            const prosCount = document.getElementById('prosCount');
+            
+            if (prosCount) {
+                prosCount.innerHTML = `📊 ${prosToShow.length} jugadores profesionales disponibles`;
+            }
+            
+            const noResults = document.getElementById('noResultsMsg');
+            if (prosToShow.length === 0) {
+                if (noResults) noResults.style.display = 'block';
+                grid.innerHTML = '';
+                return;
+            }
+            
+            if (noResults) noResults.style.display = 'none';
+            
+            grid.innerHTML = '';
+            prosToShow.forEach(pro => {
+                grid.innerHTML += `<div class="pro-card">
+                    <div class="pro-name">${pro.name}</div>
+                    <div class="pro-team">${pro.team}</div>
+                    <div class="pro-settings">
+                        <div class="pro-setting"><span class="setting-label">FOV:</span><span class="setting-value">${pro.settings.fov}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Dist:</span><span class="setting-value">${pro.settings.distance}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Height:</span><span class="setting-value">${pro.settings.height}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Angle:</span><span class="setting-value">${pro.settings.angle}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Stiff:</span><span class="setting-value">${pro.settings.stiffness}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Deadz:</span><span class="setting-value">${pro.settings.deadzone}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Sen D:</span><span class="setting-value">${pro.settings.sens_dir}</span></div>
+                        <div class="pro-setting"><span class="setting-label">Sen A:</span><span class="setting-value">${pro.settings.sens_air}</span></div>
+                    </div>
+                </div>`;
+            });
+        }
+        
+        function searchPro() {
+            const searchTerm = document.getElementById('proSearchInput').value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                loadPros(prosData[currentLang]);
+                return;
+            }
+            
+            const filtered = prosData[currentLang].filter(pro => 
+                pro.name.toLowerCase().includes(searchTerm) || 
+                pro.team.toLowerCase().includes(searchTerm)
+            );
+            
+            loadPros(filtered);
+        }
+        
+        function toggleSuggestForm() {
+            const form = document.getElementById('suggestForm');
+            form.classList.toggle('show');
+        }
+        
+        function submitSuggestion() {
+            const name = document.getElementById('suggestName').value.trim();
+            const team = document.getElementById('suggestTeam').value.trim();
+            const reason = document.getElementById('suggestReason').value.trim();
+            
+            if (!name || !team) {
+                alert(currentLang === 'es' ? '⚠️ Por favor, completa el nombre y equipo del jugador' : '⚠️ Please complete player name and team');
+                return;
+            }
+            
+            // Guardar sugerencia en localStorage
+            const suggestions = JSON.parse(localStorage.getItem('proSuggestions') || '[]');
+            suggestions.push({
+                name: name,
+                team: team,
+                reason: reason,
+                date: new Date().toISOString(),
+                status: 'pending'
+            });
+            localStorage.setItem('proSuggestions', JSON.stringify(suggestions));
+            
+            // Limpiar formulario
+            document.getElementById('suggestName').value = '';
+            document.getElementById('suggestTeam').value = '';
+            document.getElementById('suggestReason').value = '';
+            document.getElementById('suggestForm').classList.remove('show');
+            
+            alert(currentLang === 'es' 
+                ? `✅ ¡Gracias! Hemos recibido tu sugerencia para agregar a ${name}.\n\nLos administradores revisarán la solicitud.` 
+                : `✅ Thanks! We've received your suggestion to add ${name}.\n\nAdmins will review the request.`);
+        }
+        
+        // ==================== CARGAR CONFIGURACIONES ====================
         const translationsData = {
             es: {
                 navPros: "👑 Pro Players",
@@ -920,90 +1211,9 @@
                 ]
             }
         };
-
-        // ==================== VARIABLES GLOBALES ====================
+        
         let currentLang = 'es';
-
-        // ==================== FUNCIÓN PARA COMPARAR CON FECHA REAL ====================
-        function isEventFinished(event) {
-            const now = new Date();
-            return now > event.dateEnd;
-        }
-
-        // ==================== MOSTRAR DETALLES DEL EVENTO ====================
-        window.showEventDetails = function(eventJson) {
-            const event = eventJson;
-            const modal = document.getElementById('eventModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            const isFinished = isEventFinished(event);
-            const statusText = isFinished ? (currentLang === 'es' ? '🏁 FINALIZADO' : '🏁 FINISHED') : (currentLang === 'es' ? '📅 PRÓXIMO' : '📅 UPCOMING');
-            const winnerHtml = event.winner && isFinished ? `<p><strong>🏆 Winner:</strong> ${event.winner} ${event.winnerScore ? `(${event.winnerScore})` : ''}</p>` : '';
-            
-            modalTitle.innerHTML = `🏆 ${event.name}`;
-            modalBody.innerHTML = `
-                <p><strong>📅 Date:</strong> ${event.date}</p>
-                <p><strong>📍 Location:</strong> ${event.location}</p>
-                <p><strong>💰 Prize:</strong> ${event.prize}</p>
-                <p><strong>✅ Verified:</strong> ${event.verified ? (currentLang === 'es' ? 'Yes' : 'Yes') : (currentLang === 'es' ? 'Pending' : 'Pending')}</p>
-                <p><strong>📖 Description:</strong> ${event.desc}</p>
-                ${winnerHtml}
-                <p><strong>📌 Status:</strong> <span style="color: ${isFinished ? '#FF5E00' : '#4CAF50'}; font-weight: bold;">${statusText}</span></p>
-            `;
-            modal.classList.add('show');
-        };
-
-        window.closeModal = function() {
-            document.getElementById('eventModal').classList.remove('show');
-        };
-
-        // ==================== CARGAR EVENTOS ====================
-        function loadEvents() {
-            const container = document.getElementById('eventsList');
-            const events = eventsData[currentLang];
-            container.innerHTML = '';
-            events.forEach(event => {
-                const isFinished = isEventFinished(event);
-                const statusClass = isFinished ? 'status-finished' : 'status-upcoming';
-                const statusText = isFinished ? (currentLang === 'es' ? '🏁 Finished' : '🏁 Finished') : (currentLang === 'es' ? '📅 Upcoming' : '📅 Upcoming');
-                
-                container.innerHTML += `
-                    <div class="event-card ${isFinished ? 'past' : ''}" onclick="showEventDetails(${JSON.stringify(event).replace(/"/g, '&quot;')})">
-                        <div class="event-name">🏆 ${event.name}</div>
-                        <div class="event-date">📅 ${event.date}</div>
-                        <div class="event-location">📍 ${event.location}</div>
-                        <div class="event-status ${statusClass}">${statusText}</div>
-                        ${event.winner && isFinished ? `<div style="font-size:0.65em; color:#FF5E00; margin-top:5px;">🏆 Winner: ${event.winner}</div>` : ''}
-                    </div>
-                `;
-            });
-        }
-
-        // ==================== CARGAR PROS ====================
-        function loadPros() {
-            const grid = document.getElementById('prosGrid');
-            const pros = prosData[currentLang];
-            grid.innerHTML = '';
-            pros.forEach(pro => {
-                grid.innerHTML += `<div class="pro-card">
-                    <div class="pro-name">${pro.name}</div>
-                    <div class="pro-team">${pro.team}</div>
-                    <div class="pro-settings">
-                        <div class="pro-setting"><span class="setting-label">FOV:</span><span class="setting-value">${pro.settings.fov}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Dist:</span><span class="setting-value">${pro.settings.distance}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Height:</span><span class="setting-value">${pro.settings.height}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Angle:</span><span class="setting-value">${pro.settings.angle}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Stiff:</span><span class="setting-value">${pro.settings.stiffness}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Deadz:</span><span class="setting-value">${pro.settings.deadzone}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Sen D:</span><span class="setting-value">${pro.settings.sens_dir}</span></div>
-                        <div class="pro-setting"><span class="setting-label">Sen A:</span><span class="setting-value">${pro.settings.sens_air}</span></div>
-                    </div>
-                </div>`;
-            });
-        }
-
-        // ==================== CARGAR CÁMARA ====================
+        
         function loadCameraSettings() {
             const container = document.getElementById('cameraSettings');
             const settings = translationsData[currentLang].camera;
@@ -1012,8 +1222,7 @@
                 container.innerHTML += `<div class="setting-item"><div class="setting-name">${set.name}</div><div class="setting-value">${set.value}</div><div class="setting-desc">${set.desc}</div></div>`;
             });
         }
-
-        // ==================== CARGAR VIDEO ====================
+        
         function loadVideoSettings() {
             const container = document.getElementById('videoSettings');
             const settings = translationsData[currentLang].video;
@@ -1022,8 +1231,7 @@
                 container.innerHTML += `<div class="setting-item"><div class="setting-name">${set.name}</div><div class="setting-value">${set.value}</div><div class="setting-desc">${set.desc}</div></div>`;
             });
         }
-
-        // ==================== CARGAR CONSEJOS ====================
+        
         function loadTips() {
             const container = document.getElementById('tipsGrid');
             const tips = translationsData[currentLang].tips;
@@ -1032,8 +1240,7 @@
                 container.innerHTML += `<div class="setting-item"><div class="setting-name">${tip.title}</div><div class="setting-desc">${tip.desc}</div></div>`;
             });
         }
-
-        // ==================== ACTUALIZAR TEXTOS ====================
+        
         function updateUITexts() {
             document.getElementById('navPros').innerHTML = translationsData[currentLang].navPros;
             document.getElementById('navCamara').innerHTML = translationsData[currentLang].navCamara;
@@ -1062,32 +1269,30 @@
             
             document.getElementById('driftCurrent').innerHTML = `Seleccionado: ${currentDriftKey}`;
         }
-
-        // ==================== CARGAR TODO ====================
+        
         function loadAllContent() {
             updateUITexts();
             loadEvents();
-            loadPros();
+            loadPros(prosData[currentLang]);
             loadCameraSettings();
             loadControls();
             loadVideoSettings();
             loadTips();
             updateRealClock();
         }
-
-        // ==================== FUNCIONES GLOBALES ====================
+        
         window.toggleLanguage = function() {
             currentLang = currentLang === 'es' ? 'en' : 'es';
             loadAllContent();
         };
-
+        
         window.toggleTheme = function() {
             document.body.classList.toggle('dark');
             const isDark = document.body.classList.contains('dark');
             const themeBtn = document.getElementById('themeBtn');
             themeBtn.innerHTML = isDark ? (currentLang === 'es' ? '☀️ Modo Claro' : '☀️ Light Mode') : (currentLang === 'es' ? '🌙 Modo Oscuro' : '🌙 Dark Mode');
         };
-
+        
         window.showTab = function(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -1095,17 +1300,15 @@
             if(btn) btn.classList.add('active');
             closeSidebarOnMobile();
         };
-
-        // ==================== EVENT LISTENERS ====================
+        
         document.getElementById('eventModal').addEventListener('click', function(e) {
             if(e.target === this) closeModal();
         });
-
+        
         document.addEventListener('keydown', function(e) {
             if(e.key === 'Escape') closeModal();
         });
-
-        // ==================== INICIALIZAR ====================
+        
         const savedDrift = localStorage.getItem('rocketDriftKey');
         if (savedDrift) {
             currentDriftKey = savedDrift;
