@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' text-anchor='middle' dy='.3em' font-size='80'>🚗</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Rocket League Pro Settings & Events</title>
     <style>
@@ -51,6 +50,28 @@
             transition: all 0.3s ease;
         }
 
+        /* Botón hamburguesa */
+        .hamburger-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 12px;
+            display: none;
+            transition: all 0.3s;
+        }
+
+        .hamburger-btn:hover {
+            background: #FF5E00;
+        }
+
         .app-wrapper {
             display: flex;
             min-height: 100vh;
@@ -67,6 +88,18 @@
             border-right: 2px solid rgba(255, 94, 0, 0.3);
             transition: all 0.3s;
             z-index: 10;
+        }
+
+        /* Overlay para móvil */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9;
         }
 
         .sidebar-header {
@@ -349,7 +382,6 @@
             padding-left: 15px;
         }
 
-        /* Selector de controles */
         .controls-selector {
             background: var(--selector-bg);
             border-radius: 15px;
@@ -508,28 +540,46 @@
             font-size: 0.85em;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                max-height: 50vh;
+            .hamburger-btn {
+                display: block;
             }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 100;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-overlay.active {
+                display: block;
+            }
+            
             .main-content {
                 margin-left: 0;
+                padding-top: 70px;
             }
-            .app-wrapper {
-                flex-direction: column;
-            }
+            
             .pros-grid {
                 grid-template-columns: 1fr;
             }
+            
             .settings-grid {
                 grid-template-columns: 1fr;
             }
+            
             .header h1 {
                 font-size: 1.3em;
             }
+            
             .selector-group {
                 flex-direction: column;
                 align-items: flex-start;
@@ -538,8 +588,14 @@
     </style>
 </head>
 <body>
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Overlay para cerrar sidebar en móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    
     <div class="app-wrapper">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2>⚡ Rocket League</h2>
                 <p>Pro Settings & Events</p>
@@ -594,7 +650,6 @@
                 <div class="card">
                     <h2 id="controlsTitle">🎮 Controles</h2>
                     
-                    <!-- Selector de configuración de controles -->
                     <div class="controls-selector">
                         <h3>⚙️ Personalizar controles</h3>
                         <div class="selector-group">
@@ -646,6 +701,28 @@
     </div>
 
     <script>
+        // ==================== FUNCIONES DEL SIDEBAR ====================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+        
+        // Cerrar sidebar al hacer clic en un enlace (móvil)
+        function closeSidebarOnMobile() {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        }
+        
         // ==================== RELOJ EN TIEMPO REAL ====================
         function updateRealClock() {
             const now = new Date();
@@ -663,16 +740,15 @@
         
         setInterval(updateRealClock, 1000);
         
-        // ==================== CONFIGURACIÓN DE CONTROLES DINÁMICOS ====================
-        let currentDriftKey = "Square/X"; // Valor por defecto
+        // ==================== CONFIGURACIÓN DE CONTROLES ====================
+        let currentDriftKey = "Square/X";
         
-        // Base de controles (sin las teclas dinámicas)
         const controlsBase = {
             es: [
                 { action: "Acelerar", key: "R2/RT", why: "Respuesta proporcional" },
                 { action: "Frenar / Marcha atrás", key: "L2/LT", why: "Control progresivo" },
                 { action: "Saltar", key: "X/A", why: "Acceso rápido" },
-                { action: "Boost", key: "Circle/B", why: "Permite saltar y boostear juntos (configuración óptima)" },
+                { action: "Boost", key: "Circle/B", why: "Permite saltar y boostear juntos" },
                 { action: "Derrape / Rotación", key: "", why: "Estándar cómodo - Usado para half-flips" },
                 { action: "Rotación Aérea Izquierda", key: "L1/LB", why: "Air roll izquierdo" },
                 { action: "Rotación Aérea Derecha", key: "R1/RB", why: "Air roll derecho" }
@@ -681,7 +757,7 @@
                 { action: "Accelerate", key: "R2/RT", why: "Proportional response" },
                 { action: "Brake / Reverse", key: "L2/LT", why: "Progressive control" },
                 { action: "Jump", key: "X/A", why: "Quick access" },
-                { action: "Boost", key: "Circle/B", why: "Allows jumping and boosting together (optimal setup)" },
+                { action: "Boost", key: "Circle/B", why: "Allows jumping and boosting together" },
                 { action: "Drift / Air Roll", key: "", why: "Standard comfortable - Used for half-flips" },
                 { action: "Air Roll Left", key: "L1/LB", why: "Left air roll" },
                 { action: "Air Roll Right", key: "R1/RB", why: "Right air roll" }
@@ -693,6 +769,7 @@
             if (driftSelect) {
                 currentDriftKey = driftSelect.value;
                 document.getElementById('driftCurrent').innerHTML = `Seleccionado: ${currentDriftKey}`;
+                localStorage.setItem('rocketDriftKey', currentDriftKey);
             }
             loadControls();
         }
@@ -700,8 +777,6 @@
         function loadControls() {
             const body = document.getElementById('controlsBody');
             const controls = JSON.parse(JSON.stringify(controlsBase[currentLang]));
-            
-            // Actualizar la tecla de Derrape con el valor seleccionado
             controls[4].key = currentDriftKey;
             
             body.innerHTML = '';
@@ -958,14 +1033,13 @@
             });
         }
 
-        // ==================== ACTUALIZAR TEXTOS DE INTERFAZ ====================
+        // ==================== ACTUALIZAR TEXTOS ====================
         function updateUITexts() {
             document.getElementById('navPros').innerHTML = translationsData[currentLang].navPros;
             document.getElementById('navCamara').innerHTML = translationsData[currentLang].navCamara;
             document.getElementById('navControles').innerHTML = translationsData[currentLang].navControles;
             document.getElementById('navVideo').innerHTML = translationsData[currentLang].navVideo;
             document.getElementById('navConsejos').innerHTML = translationsData[currentLang].navConsejos;
-            
             document.getElementById('eventsTitle').innerHTML = translationsData[currentLang].eventsTitle;
             document.getElementById('mainTitle').innerHTML = translationsData[currentLang].mainTitle;
             document.getElementById('mainDesc').innerHTML = translationsData[currentLang].mainDesc;
@@ -986,7 +1060,6 @@
             const langBtn = document.getElementById('langBtn');
             langBtn.innerHTML = currentLang === 'es' ? '🇪🇸 Español' : '🇺🇸 English';
             
-            // Actualizar texto del selector
             document.getElementById('driftCurrent').innerHTML = `Seleccionado: ${currentDriftKey}`;
         }
 
@@ -1020,6 +1093,7 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             if(btn) btn.classList.add('active');
+            closeSidebarOnMobile();
         };
 
         // ==================== EVENT LISTENERS ====================
@@ -1032,7 +1106,6 @@
         });
 
         // ==================== INICIALIZAR ====================
-        // Cargar selector guardado de localStorage si existe
         const savedDrift = localStorage.getItem('rocketDriftKey');
         if (savedDrift) {
             currentDriftKey = savedDrift;
@@ -1046,7 +1119,6 @@
             updateRealClock();
         }, 60000);
         
-        // Guardar preferencia del selector
         window.updateControls = function() {
             const driftSelect = document.getElementById('driftSelect');
             if (driftSelect) {
