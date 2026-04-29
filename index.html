@@ -55,7 +55,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -145,7 +144,6 @@
             font-family: monospace;
         }
 
-        /* Views */
         .view {
             display: none;
         }
@@ -154,7 +152,6 @@
             display: block;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 60px 20px;
@@ -183,7 +180,6 @@
             margin-top: 20px;
         }
 
-        /* Features Grid */
         .features {
             max-width: 1200px;
             margin: 0 auto;
@@ -226,7 +222,6 @@
             font-size: 0.9em;
         }
 
-        /* Events Preview */
         .events-section {
             max-width: 1200px;
             margin: 0 auto;
@@ -291,7 +286,6 @@
             color: white;
         }
 
-        /* Content Sections */
         .content-header {
             text-align: center;
             color: white;
@@ -322,7 +316,6 @@
             padding-left: 15px;
         }
 
-        /* Pros Grid */
         .pros-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -379,7 +372,6 @@
             font-weight: bold;
         }
 
-        /* Settings Grid */
         .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -411,7 +403,6 @@
             line-height: 1.4;
         }
 
-        /* Controls Table */
         .controls-table {
             width: 100%;
             border-collapse: collapse;
@@ -439,7 +430,6 @@
             font-size: 0.85em;
         }
 
-        /* Controls Selector */
         .controls-selector {
             background: var(--selector-bg);
             border-radius: 15px;
@@ -473,7 +463,6 @@
             font-size: 0.85em;
         }
 
-        /* Search Section */
         .search-section {
             margin-bottom: 25px;
         }
@@ -515,19 +504,7 @@
             color: white;
         }
 
-        .view-suggestions-btn {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .suggest-form, .suggestions-list {
+        .suggest-form {
             margin-top: 20px;
             padding: 20px;
             background: var(--selector-bg);
@@ -535,7 +512,7 @@
             display: none;
         }
 
-        .suggest-form.show, .suggestions-list.show {
+        .suggest-form.show {
             display: block;
         }
 
@@ -563,30 +540,6 @@
             cursor: pointer;
         }
 
-        .suggestion-item {
-            background: var(--event-card-bg);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 3px solid #FF5E00;
-        }
-
-        .suggestion-name {
-            font-weight: bold;
-            color: #FF5E00;
-        }
-
-        .delete-suggestion {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.7em;
-            margin-top: 5px;
-        }
-
         .no-results {
             text-align: center;
             padding: 40px;
@@ -595,7 +548,6 @@
             margin-top: 20px;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -647,7 +599,6 @@
             color: var(--text-secondary);
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px;
@@ -682,7 +633,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <div class="navbar">
         <div class="logo" onclick="showView('landing')">RL<span>ProHub</span></div>
         <div class="nav-controls">
@@ -696,7 +646,7 @@
         </div>
     </div>
 
-    <!-- ==================== LANDING VIEW ==================== -->
+    <!-- LANDING VIEW -->
     <div id="landingView" class="view active">
         <div class="hero">
             <h1 id="heroTitle">🏆 RLProHub</h1>
@@ -747,7 +697,7 @@
         </div>
     </div>
 
-    <!-- ==================== PROS VIEW ==================== -->
+    <!-- PROS VIEW -->
     <div id="prosView" class="view">
         <div class="content-header">
             <h1 id="prosTitle">👑 Configuración de Pros</h1>
@@ -760,18 +710,12 @@
                     <button class="search-btn" id="searchBtnText" onclick="searchPro()">🔍 Buscar</button>
                     <button class="suggest-btn" id="suggestBtnText" onclick="toggleSuggestForm()">➕ Sugerir jugador</button>
                 </div>
-                <button class="view-suggestions-btn" id="viewSuggestionsBtn" onclick="toggleSuggestionsList()">📋 Ver sugerencias de jugadores</button>
                 <div id="suggestForm" class="suggest-form">
                     <h3 id="suggestFormTitle">📝 Sugerir nuevo jugador pro</h3>
                     <input type="text" id="suggestName" placeholder="Nombre del jugador">
                     <input type="text" id="suggestTeam" placeholder="Equipo">
                     <textarea id="suggestReason" placeholder="¿Por qué debería agregarse? (opcional)"></textarea>
                     <button class="submit-suggest" id="submitSuggestText" onclick="submitSuggestion()">📨 Enviar sugerencia</button>
-                </div>
-                <div id="suggestionsList" class="suggestions-list">
-                    <h3 id="suggestionsListTitle">📋 Sugerencias enviadas</h3>
-                    <div id="suggestionsContainer"></div>
-                    <button class="submit-suggest" style="background: #dc3545; margin-top: 10px;" id="clearSuggestionsText" onclick="clearAllSuggestions()">🗑️ Borrar todas las sugerencias</button>
                 </div>
             </div>
             <div id="prosCount" style="margin-bottom: 10px; color: var(--text-secondary);"></div>
@@ -783,7 +727,7 @@
         </div>
     </div>
 
-    <!-- ==================== CÁMARA VIEW ==================== -->
+    <!-- CÁMARA VIEW -->
     <div id="camaraView" class="view">
         <div class="content-header">
             <h1 id="camTitle">📷 Configuración de Cámara</h1>
@@ -794,7 +738,7 @@
         </div>
     </div>
 
-    <!-- ==================== CONTROLES VIEW ==================== -->
+    <!-- CONTROLES VIEW -->
     <div id="controlesView" class="view">
         <div class="content-header">
             <h1 id="controlsTitle">🎮 Controles</h1>
@@ -824,7 +768,7 @@
         </div>
     </div>
 
-    <!-- ==================== VIDEO VIEW ==================== -->
+    <!-- VIDEO VIEW -->
     <div id="videoView" class="view">
         <div class="content-header">
             <h1 id="videoTitle">🖥️ Video</h1>
@@ -835,7 +779,7 @@
         </div>
     </div>
 
-    <!-- ==================== CONSEJOS VIEW ==================== -->
+    <!-- CONSEJOS VIEW -->
     <div id="consejosView" class="view">
         <div class="content-header">
             <h1 id="tipsTitle">💡 Consejos para mejorar</h1>
@@ -846,7 +790,7 @@
         </div>
     </div>
 
-    <!-- ==================== EVENTOS VIEW ==================== -->
+    <!-- EVENTOS VIEW -->
     <div id="eventosView" class="view">
         <div class="content-header">
             <h1 id="eventsViewTitle">📅 Calendario RLCS 2026</h1>
@@ -857,7 +801,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- MODAL -->
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1013,11 +957,9 @@
             ]
         };
 
-        // ==================== FUNCIONES DE NAVEGACIÓN ====================
+        // ==================== FUNCIONES ====================
         function showView(viewId) {
-            document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('active');
-            });
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
             document.getElementById(viewId + 'View').classList.add('active');
             window.scrollTo(0, 0);
             
@@ -1038,7 +980,6 @@
             }
         }
 
-        // ==================== RELOJ ====================
         function updateRealClock() {
             const now = new Date();
             const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -1050,7 +991,6 @@
         }
         setInterval(updateRealClock, 1000);
 
-        // ==================== EVENTOS ====================
         function isEventFinished(event) {
             const now = new Date();
             return now > event.dateEnd;
@@ -1061,7 +1001,6 @@
             if (!container) return;
             const events = eventsData[currentLang];
             container.innerHTML = '';
-            // Mostrar los primeros 3 eventos
             events.slice(0, 3).forEach(event => {
                 const isFinished = isEventFinished(event);
                 const statusClass = isFinished ? 'status-finished' : 'status-upcoming';
@@ -1121,7 +1060,6 @@
             document.getElementById('eventModal').classList.remove('show');
         }
 
-        // ==================== PROS ====================
         function loadPros(prosList) {
             const grid = document.getElementById('prosGrid');
             if (!grid) return;
@@ -1164,78 +1102,36 @@
             }
         }
 
-        // ==================== SUGERENCIAS ====================
         function toggleSuggestForm() {
             const form = document.getElementById('suggestForm');
-            const list = document.getElementById('suggestionsList');
-            if (list.classList.contains('show')) list.classList.remove('show');
             form.classList.toggle('show');
-        }
-
-        function toggleSuggestionsList() {
-            const list = document.getElementById('suggestionsList');
-            const form = document.getElementById('suggestForm');
-            if (form.classList.contains('show')) form.classList.remove('show');
-            list.classList.toggle('show');
-            if (list.classList.contains('show')) loadSuggestions();
-        }
-
-        function loadSuggestions() {
-            const container = document.getElementById('suggestionsContainer');
-            const suggestions = JSON.parse(localStorage.getItem('proSuggestions') || '[]');
-            if (suggestions.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:20px;">' + (currentLang === 'es' ? 'No hay sugerencias aún' : 'No suggestions yet') + '</p>';
-                return;
-            }
-            container.innerHTML = '';
-            suggestions.slice().reverse().forEach((s, i) => {
-                const date = new Date(s.date).toLocaleDateString(currentLang === 'es' ? 'es-ES' : 'en-US');
-                container.innerHTML += `
-                    <div class="suggestion-item">
-                        <div class="suggestion-name">${s.name}</div>
-                        <div class="suggestion-team">${s.team}</div>
-                        ${s.reason ? `<div class="suggestion-reason">💬 ${s.reason}</div>` : ''}
-                        <div class="suggestion-date">📅 ${date}</div>
-                        <button class="delete-suggestion" onclick="deleteSuggestion(${i})">🗑️ ${currentLang === 'es' ? 'Eliminar' : 'Delete'}</button>
-                    </div>
-                `;
-            });
-        }
-
-        function deleteSuggestion(index) {
-            const suggestions = JSON.parse(localStorage.getItem('proSuggestions') || '[]');
-            const realIndex = suggestions.length - 1 - index;
-            suggestions.splice(realIndex, 1);
-            localStorage.setItem('proSuggestions', JSON.stringify(suggestions));
-            loadSuggestions();
-        }
-
-        function clearAllSuggestions() {
-            if (confirm(currentLang === 'es' ? '¿Borrar todas las sugerencias?' : 'Clear all suggestions?')) {
-                localStorage.removeItem('proSuggestions');
-                loadSuggestions();
-            }
         }
 
         function submitSuggestion() {
             const name = document.getElementById('suggestName').value.trim();
             const team = document.getElementById('suggestTeam').value.trim();
             const reason = document.getElementById('suggestReason').value.trim();
+            
             if (!name || !team) {
                 alert(currentLang === 'es' ? '⚠️ Completa nombre y equipo' : '⚠️ Complete name and team');
                 return;
             }
+            
+            // Por ahora solo guardamos en localStorage y mostramos mensaje
             const suggestions = JSON.parse(localStorage.getItem('proSuggestions') || '[]');
             suggestions.push({ name, team, reason, date: new Date().toISOString() });
             localStorage.setItem('proSuggestions', JSON.stringify(suggestions));
+            
             document.getElementById('suggestName').value = '';
             document.getElementById('suggestTeam').value = '';
             document.getElementById('suggestReason').value = '';
             document.getElementById('suggestForm').classList.remove('show');
-            alert(currentLang === 'es' ? '✅ Sugerencia enviada' : '✅ Suggestion sent');
+            
+            alert(currentLang === 'es' 
+                ? '✅ Sugerencia guardada. ¡Gracias por contribuir!' 
+                : '✅ Suggestion saved. Thanks for contributing!');
         }
 
-        // ==================== CONTROLES ====================
         function updateControls() {
             const select = document.getElementById('driftSelect');
             currentDriftKey = select.value;
@@ -1255,7 +1151,6 @@
             });
         }
 
-        // ==================== OTRAS SECCIONES ====================
         function loadCameraSettings() {
             const container = document.getElementById('cameraSettings');
             if (!container) return;
@@ -1286,7 +1181,7 @@
             });
         }
 
-        // ==================== TRADUCCIONES GENERALES ====================
+        // ==================== TRADUCCIONES ====================
         const translations = {
             es: {
                 homeText: "Inicio",
@@ -1329,11 +1224,8 @@
                 searchPlaceholder: "🔍 Buscar jugador pro...",
                 searchBtn: "🔍 Buscar",
                 suggestBtn: "➕ Sugerir jugador",
-                viewSuggestionsBtn: "📋 Ver sugerencias de jugadores",
                 suggestFormTitle: "📝 Sugerir nuevo jugador pro",
                 submitSuggest: "📨 Enviar sugerencia",
-                suggestionsListTitle: "📋 Sugerencias enviadas",
-                clearSuggestions: "🗑️ Borrar todas las sugerencias",
                 noResultsText: "❌ No se encontró el jugador",
                 noResultsSuggestionText: "¿Quieres sugerir que agreguemos a este jugador? Usa el botón 'Sugerir jugador'"
             },
@@ -1378,11 +1270,8 @@
                 searchPlaceholder: "🔍 Search pro player...",
                 searchBtn: "🔍 Search",
                 suggestBtn: "➕ Suggest player",
-                viewSuggestionsBtn: "📋 View player suggestions",
                 suggestFormTitle: "📝 Suggest new pro player",
                 submitSuggest: "📨 Submit suggestion",
-                suggestionsListTitle: "📋 Submitted suggestions",
-                clearSuggestions: "🗑️ Clear all suggestions",
                 noResultsText: "❌ Player not found",
                 noResultsSuggestionText: "Want to suggest we add this player? Use the 'Suggest player' button"
             }
@@ -1430,15 +1319,11 @@
             document.getElementById('proSearchInput').placeholder = t.searchPlaceholder;
             document.getElementById('searchBtnText').innerHTML = t.searchBtn;
             document.getElementById('suggestBtnText').innerHTML = t.suggestBtn;
-            document.getElementById('viewSuggestionsBtn').innerHTML = t.viewSuggestionsBtn;
             document.getElementById('suggestFormTitle').innerHTML = t.suggestFormTitle;
             document.getElementById('submitSuggestText').innerHTML = t.submitSuggest;
-            document.getElementById('suggestionsListTitle').innerHTML = t.suggestionsListTitle;
-            document.getElementById('clearSuggestionsText').innerHTML = t.clearSuggestions;
             document.getElementById('noResultsText').innerHTML = t.noResultsText;
             document.getElementById('noResultsSuggestionText').innerHTML = t.noResultsSuggestionText;
             
-            // Recargar todas las vistas activas y eventos
             loadEventsPreview();
             loadFullEventsList();
             loadControls();
@@ -1446,7 +1331,6 @@
             loadVideoSettings();
             loadTips();
             
-            // Solo recargar pros si la vista está activa
             if (document.getElementById('prosView').classList.contains('active')) {
                 loadPros(prosData[currentLang]);
             }
@@ -1454,7 +1338,6 @@
             updateRealClock();
         }
 
-        // ==================== TEMA ====================
         function toggleTheme() {
             document.body.classList.toggle('dark');
             const themeBtn = document.getElementById('themeBtn');
@@ -1475,9 +1358,7 @@
             if (driftSelect) driftSelect.value = savedDrift;
         }
         
-        // Cargar eventos en landing al iniciar
         loadEventsPreview();
-        
         updateAllTexts();
         loadPros(prosData[currentLang]);
         
