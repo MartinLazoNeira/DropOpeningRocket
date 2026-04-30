@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RLProHub - Rocket League Pro Settings & Events</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -612,14 +615,6 @@
             color: white;
         }
 
-        .api-error {
-            text-align: center;
-            padding: 40px;
-            background: rgba(255, 0, 0, 0.2);
-            border-radius: 15px;
-            color: white;
-        }
-
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -827,10 +822,42 @@
     </div>
 
     <script>
+        // ==================== FIREBASE CONFIGURACIÓN ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSi4XKAOCnrt93Ra61VUB5pnEQq5cvmjg",
+            authDomain: "rlprohub.firebaseapp.com",
+            projectId: "rlprohub",
+            storageBucket: "rlprohub.firebasestorage.app",
+            messagingSenderId: "962680207563",
+            appId: "1:962680207563:web:5be8b274a922e5e15bc34e"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         // ==================== VARIABLES GLOBALES ====================
         let currentLang = 'es';
         let currentDriftKey = "Square/X";
-        let liveEvents = []; // Almacenar eventos de la API
+        let liveEvents = [];
+
+        // ==================== FUNCIONES DE FIREBASE ====================
+        async function submitSuggestionToFirebase(name, team, reason) {
+            try {
+                await db.collection("suggestions").add({
+                    name: name,
+                    team: team,
+                    reason: reason,
+                    date: new Date().toISOString(),
+                    status: "pending",
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                return true;
+            } catch (error) {
+                console.error("Error al guardar en Firebase:", error);
+                return false;
+            }
+        }
 
         // ==================== PROS DATA ====================
         const prosData = {
@@ -906,28 +933,23 @@
             ]
         };
 
-        // ==================== API DE EVENTOS (Esports ICS) ====================
+        // ==================== API DE EVENTOS ====================
         async function fetchLiveEvents() {
             const container = document.getElementById('eventsPreview');
             const eventsListContainer = document.getElementById('eventsList');
             
-            // Mostrar loading
             if (container) container.innerHTML = '<div class="loading-spinner">🔄 Cargando eventos en tiempo real...</div>';
             if (eventsListContainer) eventsListContainer.innerHTML = '<div class="loading-spinner">🔄 Cargando eventos en tiempo real...</div>';
             
             try {
-                // Usar proxy CORS para evitar problemas de CORS
                 const proxyUrl = 'https://api.allorigins.win/raw?url=';
                 const apiUrl = 'https://ics.snwfdhmp.com/api/matches?game=rocket-league';
-                
                 const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
                 
                 if (!response.ok) throw new Error('API no responde');
-                
                 const data = await response.json();
                 
                 if (data && data.length > 0) {
-                    // Procesar eventos de la API
                     liveEvents = data.map(match => ({
                         name: match.name || match.tournament_name || 'Rocket League Match',
                         date: match.date || match.start_date || 'Fecha por confirmar',
@@ -937,35 +959,27 @@
                         winner: match.winner || null
                     }));
                 } else {
-                    // Si no hay datos, usar estáticos
                     liveEvents = staticEventsData[currentLang];
                 }
-                
                 displayEvents();
-                
             } catch (error) {
                 console.error('Error al cargar eventos de API:', error);
-                // Fallback a datos estáticos
                 liveEvents = staticEventsData[currentLang];
                 displayEvents();
-                showApiError();
             }
         }
 
         function displayEvents() {
             const container = document.getElementById('eventsPreview');
             const eventsListContainer = document.getElementById('eventsList');
-            
             if (!container) return;
             
             const events = liveEvents.length > 0 ? liveEvents : staticEventsData[currentLang];
             
-            // Mostrar solo primeros 3 eventos en preview
             container.innerHTML = '';
             events.slice(0, 3).forEach(event => {
                 const statusClass = event.winner ? 'status-finished' : 'status-upcoming';
                 const statusText = event.winner ? (currentLang === 'es' ? 'Finalizado' : 'Finished') : (currentLang === 'es' ? 'Próximo' : 'Upcoming');
-                
                 container.innerHTML += `
                     <div class="event-preview-card" onclick="showEventDetailsStatic('${event.name.replace(/'/g, "\\'")}', '${event.date}', '${event.location}', '${event.prize}', ${!!event.winner}, '${event.desc}', '${event.winner || ''}')">
                         <div class="event-name">🏆 ${event.name}</div>
@@ -976,13 +990,11 @@
                 `;
             });
             
-            // Lista completa de eventos
             if (eventsListContainer) {
                 eventsListContainer.innerHTML = '';
                 events.forEach(event => {
                     const statusClass = event.winner ? 'status-finished' : 'status-upcoming';
                     const statusText = event.winner ? (currentLang === 'es' ? 'Finalizado' : 'Finished') : (currentLang === 'es' ? 'Próximo' : 'Upcoming');
-                    
                     eventsListContainer.innerHTML += `
                         <div class="setting-item" style="cursor: pointer;" onclick="showEventDetailsStatic('${event.name.replace(/'/g, "\\'")}', '${event.date}', '${event.location}', '${event.prize}', ${!!event.winner}, '${event.desc}', '${event.winner || ''}')">
                             <div class="setting-name">${event.name}</div>
@@ -996,24 +1008,12 @@
             }
         }
 
-        function showApiError() {
-            const container = document.getElementById('eventsPreview');
-            if (container && container.innerHTML.includes('Cargando')) {
-                container.innerHTML = '<div class="api-error">⚠️ Usando datos de respaldo. Los eventos en tiempo real no están disponibles momentáneamente.</div>';
-                setTimeout(() => {
-                    if (liveEvents.length > 0) displayEvents();
-                }, 2000);
-            }
-        }
-
         function showEventDetailsStatic(name, date, location, prize, hasWinner, desc, winner) {
             const modal = document.getElementById('eventModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalBody = document.getElementById('modalBody');
-            
             const statusText = hasWinner ? (currentLang === 'es' ? '🏁 FINALIZADO' : '🏁 FINISHED') : (currentLang === 'es' ? '📅 PRÓXIMO' : '📅 UPCOMING');
             const winnerHtml = winner ? `<p><strong>🏆 Winner:</strong> ${winner}</p>` : '';
-            
             modalTitle.innerHTML = `🏆 ${name}`;
             modalBody.innerHTML = `
                 <p><strong>📅 Date:</strong> ${date}</p>
@@ -1042,8 +1042,6 @@
                 loadVideoSettings();
             } else if (viewId === 'consejos') {
                 loadTips();
-            } else if (viewId === 'eventos') {
-                // Ya están cargados
             }
         }
 
@@ -1097,11 +1095,7 @@
             );
             loadPros(filtered);
             const noResults = document.getElementById('noResultsMsg');
-            if (filtered.length === 0) {
-                noResults.style.display = 'block';
-            } else {
-                noResults.style.display = 'none';
-            }
+            noResults.style.display = filtered.length === 0 ? 'block' : 'none';
         }
 
         function toggleSuggestForm() {
@@ -1109,7 +1103,7 @@
             form.classList.toggle('show');
         }
 
-        function submitSuggestion() {
+        async function submitSuggestion() {
             const name = document.getElementById('suggestName').value.trim();
             const team = document.getElementById('suggestTeam').value.trim();
             const reason = document.getElementById('suggestReason').value.trim();
@@ -1119,18 +1113,29 @@
                 return;
             }
             
-            const suggestions = JSON.parse(localStorage.getItem('proSuggestions') || '[]');
-            suggestions.push({ name, team, reason, date: new Date().toISOString() });
-            localStorage.setItem('proSuggestions', JSON.stringify(suggestions));
+            const submitBtn = document.getElementById('submitSuggestText');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = currentLang === 'es' ? '⏳ Enviando...' : '⏳ Sending...';
+            submitBtn.disabled = true;
             
-            document.getElementById('suggestName').value = '';
-            document.getElementById('suggestTeam').value = '';
-            document.getElementById('suggestReason').value = '';
-            document.getElementById('suggestForm').classList.remove('show');
+            const success = await submitSuggestionToFirebase(name, team, reason);
             
-            alert(currentLang === 'es' 
-                ? '✅ Sugerencia guardada. ¡Gracias por contribuir!' 
-                : '✅ Suggestion saved. Thanks for contributing!');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
+            if (success) {
+                document.getElementById('suggestName').value = '';
+                document.getElementById('suggestTeam').value = '';
+                document.getElementById('suggestReason').value = '';
+                document.getElementById('suggestForm').classList.remove('show');
+                alert(currentLang === 'es' 
+                    ? '✅ Sugerencia guardada en la nube. ¡Gracias por contribuir!' 
+                    : '✅ Suggestion saved to cloud. Thanks for contributing!');
+            } else {
+                alert(currentLang === 'es' 
+                    ? '❌ Error al guardar. Intenta de nuevo.' 
+                    : '❌ Error saving. Try again.');
+            }
         }
 
         function updateControls() {
@@ -1395,7 +1400,6 @@
             if (document.getElementById('prosView').classList.contains('active')) {
                 loadPros(prosData[currentLang]);
             }
-            
             updateRealClock();
         }
 
@@ -1419,9 +1423,7 @@
             if (driftSelect) driftSelect.value = savedDrift;
         }
         
-        // Cargar eventos de la API
         fetchLiveEvents();
-        
         updateAllTexts();
         loadPros(prosData[currentLang]);
         
