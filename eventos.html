@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLProHub - Eventos</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><a href="index.html">RL<span>ProHub</span></a></div>
+        <div class="nav-controls">
+            <div class="real-clock"><div class="date" id="realDate"></div><div class="time" id="realTime"></div></div>
+            <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
+            <button class="lang-toggle" id="langBtn" onclick="toggleLanguage()">🇪🇸</button>
+        </div>
+    </div>
+    <div class="nav-links" style="justify-content: center; padding: 10px 0;">
+        <a href="index.html" id="inicioLink">Inicio</a>
+        <a href="pros.html" id="prosLink">Pro Players</a>
+        <a href="eventos.html" class="active" id="eventosLink">Eventos</a>
+        <a href="guia.html" id="guiaLink">Guía</a>
+        <a href="sugerencias.html" id="sugerenciasLink">Sugerencias</a>
+    </div>
+
+    <div class="content-header">
+        <h1 id="eventsTitle">📅 Calendario RLCS 2026</h1>
+        <p id="eventsDesc">Eventos oficiales de la temporada</p>
+    </div>
+
+    <div class="card" style="max-width: 1200px; margin: 0 auto;">
+        <div class="events-preview" id="eventsList"></div>
+    </div>
+
+    <div class="footer"><p id="footerText">© 2026 RLProHub</p></div>
+
+    <div id="eventModal" class="modal">
+        <div class="modal-content"><div class="modal-header"><h2 id="modalTitle">Evento</h2><button class="modal-close" onclick="closeModal()">&times;</button></div><div class="modal-body" id="modalBody"></div></div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        async function fetchEvents() {
+            const container = document.getElementById('eventsList');
+            if (container) container.innerHTML = '<div class="loading">🔄 Cargando eventos...</div>';
+            try {
+                const proxy = 'https://api.allorigins.win/raw?url=';
+                const url = 'https://ics.snwfdhmp.com/api/matches?game=rocket-league';
+                const res = await fetch(proxy + encodeURIComponent(url));
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length) {
+                        liveEvents = data.slice(0, 5).map(m => ({
+                            name: m.name || m.tournament_name || 'Rocket League Match',
+                            date: m.date || m.start_date || 'TBD',
+                            location: m.location || m.venue || 'TBD',
+                            prize: m.prize_pool || 'TBA',
+                            winner: null, status: 'upcoming'
+                        }));
+                    } else { liveEvents = staticEvents[currentLang]; }
+                } else { liveEvents = staticEvents[currentLang]; }
+            } catch (e) { liveEvents = staticEvents[currentLang]; }
+            renderEventsList();
+        }
+
+        function renderEventsList() {
+            const container = document.getElementById('eventsList');
+            if (!container) return;
+            container.innerHTML = liveEvents.map(e => `
+                <div class="event-card" onclick="showEvent('${e.name.replace(/'/g, "\\'")}', '${e.date}', '${e.location}', '${e.prize}', ${e.status === 'finished'}, '${e.winner || ''}')">
+                    <div class="event-name">🏆 ${e.name}</div>
+                    <div class="event-date">📅 ${e.date}</div>
+                    <div class="event-location">📍 ${e.location}</div>
+                    <div class="event-status ${e.status === 'finished' ? 'status-finished' : 'status-upcoming'}">${e.status === 'finished' ? (currentLang === 'es' ? 'Finalizado' : 'Finished') : (currentLang === 'es' ? 'Próximo' : 'Upcoming')}</div>
+                </div>
+            `).join('');
+        }
+
+        window.showEvent = (name, date, location, prize, isFinished, winner) => {
+            document.getElementById('modalTitle').innerHTML = `🏆 ${name}`;
+            document.getElementById('modalBody').innerHTML = `<p><strong>📅 Fecha:</strong> ${date}</p><p><strong>📍 Ubicación:</strong> ${location}</p><p><strong>💰 Premio:</strong> ${prize}</p>${winner ? `<p><strong>🏆 Ganador:</strong> ${winner}</p>` : ''}<p><strong>📌 Estado:</strong> <span style="color: ${isFinished ? '#FF5E00' : '#4CAF50'}; font-weight: bold;">${isFinished ? (currentLang === 'es' ? 'FINALIZADO' : 'FINISHED') : (currentLang === 'es' ? 'PRÓXIMO' : 'UPCOMING')}</span></p>`;
+            document.getElementById('eventModal').classList.add('show');
+        };
+
+        function closeModal() { document.getElementById('eventModal').classList.remove('show'); }
+        window.closeModal = closeModal;
+
+        function updateAllTexts() {
+            const t = translations[currentLang];
+            document.getElementById('inicioLink').innerHTML = t.inicio;
+            document.getElementById('prosLink').innerHTML = t.pros;
+            document.getElementById('eventosLink').innerHTML = t.eventos;
+            document.getElementById('guiaLink').innerHTML = t.guia;
+            document.getElementById('sugerenciasLink').innerHTML = t.sugerencias;
+            document.getElementById('eventsTitle').innerHTML = t.eventosTitle;
+            document.getElementById('eventsDesc').innerHTML = t.eventosDesc;
+            document.getElementById('footerText').innerHTML = t.footerText;
+            renderEventsList();
+        }
+        updateAllTexts();
+        fetchEvents();
+        document.getElementById('eventModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+</html>
