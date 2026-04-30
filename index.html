@@ -32,28 +32,88 @@
     </div>
 
     <div class="features">
-        <a href="pros.html" class="feature-card"><div class="feature-icon">👑</div><h3>Pro Players</h3><p>Configuraciones de los mejores jugadores</p></a>
-        <a href="eventos.html" class="feature-card"><div class="feature-icon">📅</div><h3>RLCS Events</h3><p>Calendario oficial de torneos</p></a>
-        <a href="guia.html" class="feature-card"><div class="feature-icon">📚</div><h3>Guía</h3><p>Configuración de cámara, controles y más</p></a>
-        <a href="sugerencias.html" class="feature-card"><div class="feature-icon">📝</div><h3>Sugerencias</h3><p>¿Falta algún jugador? Dínoslo</p></a>
+        <a href="pros.html" class="feature-card">
+            <div class="feature-icon">👑</div>
+            <h3 id="featureProsTitle">Pro Players</h3>
+            <p id="featureProsDesc">Configuraciones de los mejores jugadores</p>
+        </a>
+        <a href="eventos.html" class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3 id="featureEventsTitle">RLCS Events</h3>
+            <p id="featureEventsDesc">Calendario oficial de torneos</p>
+        </a>
+        <a href="guia.html" class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3 id="featureGuiaTitle">Guía</h3>
+            <p id="featureGuiaDesc">Configuración de cámara, controles y más</p>
+        </a>
+        <a href="sugerencias.html" class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3 id="featureSugerenciasTitle">Sugerencias</h3>
+            <p id="featureSugerenciasDesc">¿Falta algún jugador? Dínoslo</p>
+        </a>
     </div>
 
     <div class="footer"><p id="footerText">© 2026 RLProHub - Configuraciones y eventos de Rocket League</p></div>
 
     <script src="js/main.js"></script>
     <script>
+        // Traducciones adicionales para las tarjetas
+        const cardTranslations = {
+            es: {
+                featureProsTitle: "Pro Players",
+                featureProsDesc: "Configuraciones de los mejores jugadores",
+                featureEventsTitle: "RLCS Events",
+                featureEventsDesc: "Calendario oficial de torneos",
+                featureGuiaTitle: "Guía",
+                featureGuiaDesc: "Configuración de cámara, controles y más",
+                featureSugerenciasTitle: "Sugerencias",
+                featureSugerenciasDesc: "¿Falta algún jugador? Dínoslo"
+            },
+            en: {
+                featureProsTitle: "Pro Players",
+                featureProsDesc: "Settings from the best players",
+                featureEventsTitle: "RLCS Events",
+                featureEventsDesc: "Official tournament calendar",
+                featureGuiaTitle: "Guide",
+                featureGuiaDesc: "Camera settings, controls and more",
+                featureSugerenciasTitle: "Suggestions",
+                featureSugerenciasDesc: "Missing a player? Let us know"
+            }
+        };
+
         function updateAllTexts() {
             const t = translations[currentLang];
+            const ct = cardTranslations[currentLang];
+            
+            // Navegación
             document.getElementById('inicioLink').innerHTML = t.inicio;
             document.getElementById('prosLink').innerHTML = t.pros;
             document.getElementById('eventosLink').innerHTML = t.eventos;
             document.getElementById('guiaLink').innerHTML = t.guia;
             document.getElementById('sugerenciasLink').innerHTML = t.sugerencias;
+            
+            // Hero
             document.getElementById('heroTitle').innerHTML = t.heroTitle;
             document.getElementById('heroDesc').innerHTML = t.heroDesc;
             document.getElementById('heroBadge').innerHTML = t.heroBadge;
+            
+            // Tarjetas (Feature cards)
+            if (document.getElementById('featureProsTitle')) {
+                document.getElementById('featureProsTitle').innerHTML = ct.featureProsTitle;
+                document.getElementById('featureProsDesc').innerHTML = ct.featureProsDesc;
+                document.getElementById('featureEventsTitle').innerHTML = ct.featureEventsTitle;
+                document.getElementById('featureEventsDesc').innerHTML = ct.featureEventsDesc;
+                document.getElementById('featureGuiaTitle').innerHTML = ct.featureGuiaTitle;
+                document.getElementById('featureGuiaDesc').innerHTML = ct.featureGuiaDesc;
+                document.getElementById('featureSugerenciasTitle').innerHTML = ct.featureSugerenciasTitle;
+                document.getElementById('featureSugerenciasDesc').innerHTML = ct.featureSugerenciasDesc;
+            }
+            
+            // Footer
             document.getElementById('footerText').innerHTML = t.footerText;
         }
+        
         updateAllTexts();
     </script>
 </body>
