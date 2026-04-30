@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLProHub - Pro Players</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><a href="index.html">RL<span>ProHub</span></a></div>
+        <div class="nav-controls">
+            <div class="real-clock"><div class="date" id="realDate"></div><div class="time" id="realTime"></div></div>
+            <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
+            <button class="lang-toggle" id="langBtn" onclick="toggleLanguage()">🇪🇸</button>
+        </div>
+    </div>
+    <div class="nav-links" style="justify-content: center; padding: 10px 0;">
+        <a href="index.html" id="inicioLink">Inicio</a>
+        <a href="pros.html" class="active" id="prosLink">Pro Players</a>
+        <a href="eventos.html" id="eventosLink">Eventos</a>
+        <a href="guia.html" id="guiaLink">Guía</a>
+        <a href="sugerencias.html" id="sugerenciasLink">Sugerencias</a>
+    </div>
+
+    <div class="content-header">
+        <h1 id="prosTitle">👑 Configuración de Pros</h1>
+        <p id="prosDesc">Haz clic en cualquier jugador para ver su configuración</p>
+    </div>
+
+    <div class="card" style="max-width: 1400px; margin: 0 auto;">
+        <div class="buscar-section">
+            <div class="buscar-box">
+                <input type="text" id="proSearchInput" class="buscar-input" placeholder="🔍 Buscar jugador pro...">
+                <button class="buscar-btn" onclick="searchPro()">🔍 Buscar</button>
+            </div>
+        </div>
+        <div id="prosCount" style="margin-bottom: 10px; color: var(--text-secondary);"></div>
+        <div class="pros-grid" id="prosGrid"></div>
+        <div id="noResultsMsg" style="display: none;" class="card" style="text-align: center; padding: 40px;">
+            <p id="noResultsText">❌ No se encontró el jugador</p>
+        </div>
+    </div>
+
+    <div class="footer"><p id="footerText">© 2026 RLProHub</p></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        let currentPros = [...prosData[currentLang]];
+
+        function renderPros() {
+            const grid = document.getElementById('prosGrid');
+            const count = document.getElementById('prosCount');
+            if (!grid) return;
+            count.innerHTML = `📊 ${currentPros.length} ${currentLang === 'es' ? 'jugadores' : 'players'}`;
+            grid.innerHTML = '';
+            currentPros.forEach(pro => {
+                const card = document.createElement('div'); card.className = 'pro-card';
+                const header = document.createElement('div'); header.className = 'pro-header';
+                header.onclick = () => { const d = document.getElementById(`det-${pro.name}`); const i = document.getElementById(`icon-${pro.name}`); if (d.classList.contains('show')) { d.classList.remove('show'); i.innerHTML = '▼'; } else { d.classList.add('show'); i.innerHTML = '▲'; } };
+                const avatar = document.createElement('div'); avatar.className = 'pro-avatar'; avatar.innerHTML = pro.name.charAt(0);
+                const info = document.createElement('div'); info.className = 'pro-info-summary'; info.innerHTML = `<div class="pro-name">${pro.name}</div><div class="pro-team">${pro.team}</div>`;
+                const icon = document.createElement('div'); icon.className = 'toggle-icon'; icon.id = `icon-${pro.name}`; icon.innerHTML = '▼';
+                header.appendChild(avatar); header.appendChild(info); header.appendChild(icon); card.appendChild(header);
+                const details = document.createElement('div'); details.className = 'pro-details'; details.id = `det-${pro.name}`;
+                details.innerHTML = `<h4>📷 Cámara</h4><table class="settings-table"><tr><td>Campo de visión</td><td>${pro.settings.fov}</td></tr><tr><td>Distancia</td><td>${pro.settings.distance}</td></tr><tr><td>Altura</td><td>${pro.settings.height}</td></tr><tr><td>Ángulo</td><td>${pro.settings.angle}</td></tr><tr><td>Rigidez</td><td>${pro.settings.stiffness}</td></tr><tr><td>Velocidad giro</td><td>${pro.settings.swivel || 3.5}</td></tr></table><h4>🎮 Controles</h4><table class="settings-table"><tr><td>Zona muerta</td><td>${pro.settings.deadzone}</td></tr><tr><td>Sensibilidad Dir</td><td>${pro.settings.sens_dir}</td></tr><tr><td>Sensibilidad Aire</td><td>${pro.settings.sens_air}</td></tr></table>`;
+                card.appendChild(details); grid.appendChild(card);
+            });
+        }
+
+        function searchPro() {
+            const term = document.getElementById('proSearchInput').value.toLowerCase().trim();
+            if (term === '') { currentPros = [...prosData[currentLang]]; renderPros(); document.getElementById('noResultsMsg').style.display = 'none'; return; }
+            const filtered = prosData[currentLang].filter(p => p.name.toLowerCase().includes(term) || p.team.toLowerCase().includes(term));
+            currentPros = filtered; renderPros();
+            document.getElementById('noResultsMsg').style.display = filtered.length === 0 ? 'block' : 'none';
+        }
+
+        function updateAllTexts() {
+            const t = translations[currentLang];
+            document.getElementById('inicioLink').innerHTML = t.inicio;
+            document.getElementById('prosLink').innerHTML = t.pros;
+            document.getElementById('eventosLink').innerHTML = t.eventos;
+            document.getElementById('guiaLink').innerHTML = t.guia;
+            document.getElementById('sugerenciasLink').innerHTML = t.sugerencias;
+            document.getElementById('prosTitle').innerHTML = t.prosTitle;
+            document.getElementById('prosDesc').innerHTML = t.prosDesc;
+            document.getElementById('footerText').innerHTML = t.footerText;
+            document.getElementById('proSearchInput').placeholder = t.searchPlaceholder;
+            document.querySelector('.buscar-btn').innerHTML = t.searchBtn;
+            document.getElementById('noResultsText').innerHTML = t.noResults;
+            renderPros();
+        }
+        updateAllTexts();
+    </script>
+</body>
+</html>
