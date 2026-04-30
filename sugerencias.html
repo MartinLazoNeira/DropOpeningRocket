@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLProHub - Sugerencias</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><a href="index.html">RL<span>ProHub</span></a></div>
+        <div class="nav-controls">
+            <div class="real-clock"><div class="date" id="realDate"></div><div class="time" id="realTime"></div></div>
+            <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
+            <button class="lang-toggle" id="langBtn" onclick="toggleLanguage()">🇪🇸</button>
+        </div>
+    </div>
+    <div class="nav-links" style="justify-content: center; padding: 10px 0;">
+        <a href="index.html" id="inicioLink">Inicio</a>
+        <a href="pros.html" id="prosLink">Pro Players</a>
+        <a href="eventos.html" id="eventosLink">Eventos</a>
+        <a href="guia.html" id="guiaLink">Guía</a>
+        <a href="sugerencias.html" class="active" id="sugerenciasLink">Sugerencias</a>
+    </div>
+
+    <div class="content-header">
+        <h1 id="sugerenciasTitle">📝 Sugerencias de Jugadores</h1>
+        <p id="sugerenciasDesc">¿Falta algún jugador pro? Dínoslo y lo agregaremos</p>
+    </div>
+
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <h2 id="formTitle">➕ Sugerir nuevo jugador pro</h2>
+        <input type="text" id="suggestName" class="search-input" style="width:100%; margin-bottom:10px;" placeholder="Nombre del jugador">
+        <input type="text" id="suggestTeam" class="search-input" style="width:100%; margin-bottom:10px;" placeholder="Equipo">
+        <textarea id="suggestReason" class="search-input" style="width:100%; margin-bottom:10px; min-height:80px;" placeholder="¿Por qué debería agregarse? (opcional)"></textarea>
+        <button class="submit-suggest" id="submitBtn" style="width:100%;" onclick="submitSuggestion()">📨 Enviar sugerencia</button>
+    </div>
+
+    <div class="footer"><p id="footerText">© 2026 RLProHub</p></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        async function submitSuggestion() {
+            const name = document.getElementById('suggestName').value.trim();
+            const team = document.getElementById('suggestTeam').value.trim();
+            const reason = document.getElementById('suggestReason').value.trim();
+            if (!name || !team) {
+                alert(currentLang === 'es' ? '⚠️ Completa nombre y equipo' : '⚠️ Complete name and team');
+                return;
+            }
+            const btn = document.getElementById('submitBtn');
+            const original = btn.innerHTML;
+            btn.innerHTML = currentLang === 'es' ? '⏳ Enviando...' : '⏳ Sending...';
+            btn.disabled = true;
+            const success = await submitSuggestionToFirebase(name, team, reason);
+            btn.innerHTML = original;
+            btn.disabled = false;
+            if (success) {
+                document.getElementById('suggestName').value = '';
+                document.getElementById('suggestTeam').value = '';
+                document.getElementById('suggestReason').value = '';
+                alert(currentLang === 'es' ? '✅ Sugerencia guardada. ¡Gracias!' : '✅ Suggestion saved. Thanks!');
+            } else {
+                alert(currentLang === 'es' ? '❌ Error al guardar' : '❌ Error saving');
+            }
+        }
+
+        function updateAllTexts() {
+            const t = translations[currentLang];
+            document.getElementById('inicioLink').innerHTML = t.inicio;
+            document.getElementById('prosLink').innerHTML = t.pros;
+            document.getElementById('eventosLink').innerHTML = t.eventos;
+            document.getElementById('guiaLink').innerHTML = t.guia;
+            document.getElementById('sugerenciasLink').innerHTML = t.sugerencias;
+            document.getElementById('sugerenciasTitle').innerHTML = t.sugerenciasTitle;
+            document.getElementById('sugerenciasDesc').innerHTML = t.sugerenciasDesc;
+            document.getElementById('formTitle').innerHTML = t.suggestFormTitle;
+            document.getElementById('suggestName').placeholder = t.suggestNamePlaceholder;
+            document.getElementById('suggestTeam').placeholder = t.suggestTeamPlaceholder;
+            document.getElementById('suggestReason').placeholder = t.suggestReasonPlaceholder;
+            document.getElementById('submitBtn').innerHTML = t.submitSuggest;
+            document.getElementById('footerText').innerHTML = t.footerText;
+        }
+        updateAllTexts();
+    </script>
+</body>
+</html>
