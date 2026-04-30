@@ -21,11 +21,11 @@
 | 🕐 **Real-time clock** | Shows current system date and time |
 | 🌓 **Dark/Light mode** | Adaptable interface to your preference |
 | 🌎 **Bilingual** | Full support for Spanish and English |
-| 👑 **15+ Pro Players** | Real settings from the best players |
+| 👑 **8+ Pro Players** | Real settings from the best players |
 | 🔍 **Smart search** | Search by name or team |
 | 📝 **Suggest players** | Users can propose new pros |
 | 🎮 **Customizable controls** | Set your preferred keybindings |
-| 📅 **RLCS 2026 Calendar** | Official events with real dates |
+| 📅 **RLCS Calendar** | Official events with real dates |
 | 📱 **Responsive Design** | Works perfectly on mobile and PC |
 | 💾 **Local persistence** | Saves your preferences in the browser |
 
@@ -43,13 +43,6 @@
 | Daniel | Shopify |
 | Rise | BDS |
 | Atow | KC |
-| Chronic | Gen.G |
-| Nwpo | Twisted Minds |
-| Reysbull | Team Secret |
-| AcroniK | Gentle Mates |
-| Oski | KC |
-| Itachi | Gentle Mates |
-| ExoTiiK | Vitality |
 
 ---
 
