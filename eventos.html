@@ -45,7 +45,7 @@
     <script>
         async function fetchEvents() {
             const container = document.getElementById('eventsList');
-            if (container) container.innerHTML = '<div class="loading">🔄 Cargando eventos...</div>';
+            if (container) container.innerHTML = '<div class="loading">🔄 Loading...</div>';
             try {
                 const proxy = 'https://api.allorigins.win/raw?url=';
                 const url = 'https://ics.snwfdhmp.com/api/matches?game=rocket-league';
